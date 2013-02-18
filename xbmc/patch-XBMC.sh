@@ -48,7 +48,7 @@ fi
 
 for patch in $PATCHES
 do
-    wget https://github.com/xbianonpi/xbian-patches/tree/master/xbmc/$patch -O $patch
+    wget https://raw.github.com/xbianonpi/xbian-patches/master/xbmc/$patch -O $patch
     patch -p1 < $patch
     rm $patch
 done
