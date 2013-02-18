@@ -44,3 +44,13 @@
  				</content>
  			</control>
  			<control type="image">
+
+
+--- a/addons/skin.confluence/720p/VideoFullScreen.xml  
++++ b/addons/skin.confluence/720p/VideoFullScreen.xml
+@@ -1,4 +1,5 @@
+ <window>
++ <onunload condition="!Player.Paused">PlayerControl(Play)</onunload>
+  <defaultcontrol>-</defaultcontrol>
+ 	<controls>
+ 		<!-- media infos -->
