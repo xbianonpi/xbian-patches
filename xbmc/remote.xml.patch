@@ -1,5 +1,5 @@
---- a/usr/local/share/xbmc/system/keymaps/remote.xml
-+++ b/usr/local/share/xbmc/system/keymaps/remote.xml
+--- a/system/keymaps/remote.xml
++++ b/system/keymaps/remote.xml
 @@ -63,10 +63,11 @@
        <volumeminus>VolumeDown</volumeminus>
        <mute>Mute</mute>

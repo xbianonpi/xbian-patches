@@ -1,5 +1,5 @@
---- a/usr/local/share/xbmc/system/Lircmap.xml
-+++ b/usr/local/share/xbmc/system/Lircmap.xml
+--- a/system/Lircmap.xml
++++ b/system/Lircmap.xml
 @@ -10,6 +10,7 @@
  
  <lircmap>
