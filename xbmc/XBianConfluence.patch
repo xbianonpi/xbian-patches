@@ -1,7 +1,7 @@
 --- a/addons/skin.confluence/720p/SettingsSystemInfo.xml
 +++ b/addons/skin.confluence/720p/SettingsSystemInfo.xml
 @@ -276,7 +276,7 @@
-  			<control type="label" id="52">
+ 				<control type="label" id="52">
  					<description>XBMC BUILD Version</description>
  					<posx>750</posx>
 -					<posy>400</posy>
@@ -14,33 +14,33 @@
  					<font>font13_title</font>
  				</control>
 -				<control type="label">
-+				<!--<control type="label">
++				<!--control type="label">
  					<description>CPU Text</description>
  					<posx>420</posx>
  					<posy>450</posy>
-@@ -304,7 +304,7 @@
- 					<width>320</width>
- 					<height>16</height>
- 					<info>System.CPUUsage</info>
+@@ -296,7 +296,7 @@
+ 					<textcolor>white</textcolor>
+ 					<shadowcolor>black</shadowcolor>
+ 					<font>font12_title</font>
 -				</control>
-+				</control>-->
- 				<control type="label">
- 					<description>Memory Text</description>
- 					<posx>420</posx>
++				</control-->
+ 				<control type="progress">
+ 					<description>CPU BAR</description>
+ 					<posx>430</posx>
 
 
 --- a/addons/skin.confluence/720p/Settings.xml
 +++ b/addons/skin.confluence/720p/Settings.xml
 @@ -169,6 +169,12 @@
-   					<onclick>ActivateWindow(SystemSettings)</onclick>
+ 						<onclick>ActivateWindow(SystemSettings)</onclick>
  						<icon>-</icon>
  					</item>
-+					<item id="10">
-+						<label>XBian</label>
-+						<label2>[B]CONFIGURE XBIAN[/B][CR][CR]If you have any questions,[CR]feel free to ask them on www.xbian.org</label2>
-+						<onclick>RunAddon(plugin.xbianconfig)</onclick>
-+						<icon>-</icon>
-+					</item>
++                    <item id="10">
++                        <label>XBian</label>
++                        <label2>[B]CONFIGURE XBIAN[/B][CR][CR]If you have any questions,[CR]feel free to ask them on www.xbian.org</label2>
++                        <onclick>RunAddon(plugin.xbianconfig)</onclick>
++                        <icon>-</icon>
++                    </item>
  				</content>
  			</control>
  			<control type="image">
