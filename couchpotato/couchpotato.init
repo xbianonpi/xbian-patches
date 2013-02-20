@@ -1,0 +1,115 @@
+#!/bin/bash
+#
+#Copyright 2012 CurlyMo <development@xbian.org>
+#
+#This file is part of XBian - XBMC on the Raspberry Pi.
+#
+#XBian is free software: you can redistribute it and/or modify it under the
+#terms of the GNU General Public License as published by the Free Software
+#Foundation, either version 3 of the License, or (at your option) any later
+#version.
+#
+#XBian is distributed in the hope that it will be useful, but WITHOUT ANY
+#WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+#FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+#details.
+#
+#You should have received a copy of the GNU General Public License along
+#with XBian. If not, see <http://www.gnu.org/licenses/>
+#
+### BEGIN INIT INFO
+# Provides:          couchpotato
+# Required-Start:    $local_fs $network $remote_fs
+# Required-Stop:     $local_fs $network $remote_fs
+# Should-Start:      $NetworkManager
+# Should-Stop:       $NetworkManager
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts instance of CouchPotato
+# Description:       starts instance of CouchPotato using start-stop-daemon
+### END INIT INFO
+
+APP_PATH=/usr/local/share/couchpotato/
+RUN_AS=xbian
+DAEMON=/usr/bin/python
+PID_FILE=/tmp/couchpotato.pid
+PID_PATH=$(dirname $PID_FILE)
+NAME=couchpotato
+DESC=CouchPotato
+DAEMON_OPTS=" CouchPotato.py --daemon --pid_file=${PID_FILE} --config_file=/usr/local/etc/couchpotato/settings.conf"
+
+##
+. /lib/lsb/init-functions
+test -x $DAEMON || exit 0
+set -e
+
+check_retval() {
+        if [ $? -eq 0 ]; then
+                log_end_msg 0
+                return 0
+        else
+                log_end_msg 1
+                exit 1
+        fi
+}
+
+is_running() {
+	if [ -f $PID_FILE ]; then
+		PID=$(cat $PID_FILE);
+		if [ ! -z $PID ]; then
+			kill -0 $PID 2>/dev/null;
+			RUNNING=$?;
+			if [ $RUNNING -eq 1 ]; then
+				echo 0;
+			else
+				echo 1;
+			fi
+		else
+			echo 0
+		fi
+	else
+		echo 0
+	fi
+}
+
+ACTION=$1;
+RUNNING=$(is_running);
+
+case "$ACTION" in
+	start)
+		if [ $RUNNING -eq 0 ]; then
+			log_daemon_msg "Starting Couchpotato"
+			if [ -f $PID_FILE ]; then
+				rm $PID_FILE;
+			fi
+			start-stop-daemon -d $APP_PATH -c $RUN_AS --start --background --pidfile $PID_FILE --exec $DAEMON -- $DAEMON_OPTS
+			check_retval
+		else
+			PID=$(cat $PID_FILE);
+			log_success_msg "Sickbeard already running (pid $PID)"
+		fi
+	;;
+	stop)
+		if [ $RUNNING -eq 1 ]; then
+			log_daemon_msg "Stopping Couchpotato"
+			start-stop-daemon --stop --pidfile $PID_FILE --retry 15
+			check_retval
+			if [ -f $PID_FILE ]; then
+				rm $PID_FILE;
+			fi
+		else
+			log_success_msg "Couchpotato not running"
+		fi
+	;;
+	restart|force-reload)
+		$0 stop
+		$0 start
+	;;
+	*)
+		N=/etc/init.d/$NAME
+		echo "Usage: $N {start|stop|restart|force-reload}" >&2
+		exit 1
+	;;
+esac
+
+exit 0
