@@ -25,13 +25,10 @@ if [ "$1" = "12" ]; then
     WOL.patch
     Splash.patch
     omxcodecs.patch
-    AvoidBlocking.patch
-    FixASSSubtitles.patch
     DualAudioOutput.patch
     remote.xml.patch
     XBianConfluence.patch
-    Lircmap.xml.patch
-    FixASSHang.patch"
+    Lircmap.xml.patch"
 elif [ "$1" = "13" ]; then
     PATCHES="TPNno.patch
     EGLRes.patch
