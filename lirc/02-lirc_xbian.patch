@@ -1,5 +1,5 @@
---- configure.ac
-+++ configure.ac
+--- a/configure.ac
++++ b/configure.ac
 @@ -171,8 +171,7 @@
         (lirc_dev lirc_parallel) \
         (lirc_dev lirc_sasem) \
