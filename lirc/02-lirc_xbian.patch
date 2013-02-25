@@ -1,6 +1,5 @@
-
---- configure.ac1       2012-11-15 14:31:24.448087379 +0100
-+++ configure.ac        2012-11-15 14:32:02.977755311 +0100
+--- configure.ac
++++ configure.ac
 @@ -171,8 +171,7 @@
         (lirc_dev lirc_parallel) \
         (lirc_dev lirc_sasem) \
