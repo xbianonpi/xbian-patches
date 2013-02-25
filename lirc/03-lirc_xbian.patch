@@ -1,5 +1,5 @@
---- a/drivers/lirc_atiusb/lirc_atiusb.c	2012-10-30 14:52:26.470825327 +0100
-+++ b/drivers/lirc_atiusb/lirc_atiusb.c	2012-10-30 14:52:09.380996874 +0100
+--- a/drivers/lirc_atiusb/lirc_atiusb.c
++++ b/drivers/lirc_atiusb/lirc_atiusb.c
 @@ -48,7 +48,7 @@
  #include <linux/slab.h>
  #include <linux/module.h>
