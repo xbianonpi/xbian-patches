@@ -1,9 +1,12 @@
-From bc1391cd768f97d76312ec56a7dfa3f086144b8b Mon Sep 17 00:00:00 2001
+From fe4e14ede10904900b917f8486217a51c01cb0bc Mon Sep 17 00:00:00 2001
 From: "t4.ravenbird" <t4.ravenbird@gmail.com>
-Date: Fri, 8 Feb 2013 21:07:22 +0100
-Subject: [PATCH 1/3] wake on access
+Date: Mon, 25 Feb 2013 08:57:50 +0100
+Subject: [PATCH] wake on access
 
 ---
+ XBMC-ATV2.xcodeproj/project.pbxproj         |    6 +
+ XBMC-IOS.xcodeproj/project.pbxproj          |    6 +
+ XBMC.xcodeproj/project.pbxproj              |    6 +
  language/English/strings.po                 |   46 +-
  project/VS2010Express/XBMC.vcxproj          |    2 +
  project/VS2010Express/XBMC.vcxproj.filters  |    6 +
@@ -14,25 +17,142 @@ Subject: [PATCH 1/3] wake on access
  xbmc/filesystem/FileFactory.cpp             |    3 +
  xbmc/main/main.cpp                          |    7 -
  xbmc/network/Makefile.in                    |    1 +
- xbmc/network/Network.h                      |    5 +
- xbmc/network/WakeOnAccess.cpp               |  659 +++++++++++++++++++++++++++
- xbmc/network/WakeOnAccess.h                 |   90 ++++
- xbmc/network/linux/NetworkLinux.cpp         |   61 +++
+ xbmc/network/Network.cpp                    |  117 +++++
+ xbmc/network/Network.h                      |    6 +
+ xbmc/network/WakeOnAccess.cpp               |  679 +++++++++++++++++++++++++++
+ xbmc/network/WakeOnAccess.h                 |   80 ++++
+ xbmc/network/linux/NetworkLinux.cpp         |  119 +++++
  xbmc/network/linux/NetworkLinux.h           |    5 +
+ xbmc/network/osx/ioshacks.h                 |   70 +++
  xbmc/network/windows/NetworkWin32.cpp       |   54 +++
  xbmc/network/windows/NetworkWin32.h         |    5 +
  xbmc/settings/GUISettings.cpp               |    1 +
  xbmc/settings/GUIWindowSettingsCategory.cpp |    7 +
  xbmc/settings/Settings.cpp                  |    6 +
- 20 files changed, 977 insertions(+), 15 deletions(-)
+ 25 files changed, 1251 insertions(+), 15 deletions(-)
  create mode 100644 xbmc/network/WakeOnAccess.cpp
  create mode 100644 xbmc/network/WakeOnAccess.h
+ create mode 100644 xbmc/network/osx/ioshacks.h
 
+diff --git a/XBMC-ATV2.xcodeproj/project.pbxproj b/XBMC-ATV2.xcodeproj/project.pbxproj
+index bb5884e..221b188 100644
+--- a/XBMC-ATV2.xcodeproj/project.pbxproj
++++ b/XBMC-ATV2.xcodeproj/project.pbxproj
+@@ -172,6 +172,7 @@
+  	DFA0F9551618E1CD00611CBB /* DVDOverlayCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA0F9541618E1CD00611CBB /* DVDOverlayCodec.cpp */; };
+ 		DFA6BE8713FED2A10048CC11 /* AirPlayServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA6BE8513FED2A10048CC11 /* AirPlayServer.cpp */; };
+ 		DFA6BE8A13FED2B40048CC11 /* HttpParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA6BE8813FED2B40048CC11 /* HttpParser.cpp */; };
++		DFA815A216713BC400E4E597 /* WakeOnAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA815A016713BC400E4E597 /* WakeOnAccess.cpp */; };
+ 		DFAB04C113F8385F00B70BFB /* InertialScrollingHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB04BF13F8385F00B70BFB /* InertialScrollingHandler.cpp */; };
+ 		DFAB4C0F15FCCB4300E1BAF6 /* TagLibVFSStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB4C0B15FCCB4300E1BAF6 /* TagLibVFSStream.cpp */; };
+ 		DFAB4C1015FCCB4300E1BAF6 /* TagLoaderTagLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB4C0D15FCCB4300E1BAF6 /* TagLoaderTagLib.cpp */; };
+@@ -1420,6 +1421,8 @@
+ 		DFA6BE8613FED2A10048CC11 /* AirPlayServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirPlayServer.h; sourceTree = "<group>"; };
+ 		DFA6BE8813FED2B40048CC11 /* HttpParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HttpParser.cpp; sourceTree = "<group>"; };
+ 		DFA6BE8913FED2B40048CC11 /* HttpParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpParser.h; sourceTree = "<group>"; };
++		DFA815A016713BC400E4E597 /* WakeOnAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WakeOnAccess.cpp; sourceTree = "<group>"; };
++		DFA815A116713BC400E4E597 /* WakeOnAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WakeOnAccess.h; sourceTree = "<group>"; };
+ 		DFAB04BF13F8385F00B70BFB /* InertialScrollingHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InertialScrollingHandler.cpp; sourceTree = "<group>"; };
+ 		DFAB04C013F8385F00B70BFB /* InertialScrollingHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InertialScrollingHandler.h; sourceTree = "<group>"; };
+ 		DFAB4C0B15FCCB4300E1BAF6 /* TagLibVFSStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagLibVFSStream.cpp; sourceTree = "<group>"; };
+@@ -5480,6 +5483,8 @@
+ 				F56C7668131EC153000AD0F6 /* TCPServer.h */,
+ 				F56C766B131EC153000AD0F6 /* UdpClient.cpp */,
+ 				F56C766C131EC153000AD0F6 /* UdpClient.h */,
++				DFA815A016713BC400E4E597 /* WakeOnAccess.cpp */,
++				DFA815A116713BC400E4E597 /* WakeOnAccess.h */,
+ 				F56C766D131EC153000AD0F6 /* WebServer.cpp */,
+ 				F56C766E131EC153000AD0F6 /* WebServer.h */,
+ 				F56C766F131EC153000AD0F6 /* Zeroconf.cpp */,
+@@ -7687,6 +7692,7 @@
+ 				DF64FE6F16C07B2C00D028FB /* ViewDatabase.cpp in Sources */,
+ 				DFD5812B16C829020008EEA0 /* DAVCommon.cpp in Sources */,
+ 				DFD5812C16C829020008EEA0 /* DAVFile.cpp in Sources */,
++				DFA815A216713BC400E4E597 /* WakeOnAccess.cpp in Sources */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+diff --git a/XBMC-IOS.xcodeproj/project.pbxproj b/XBMC-IOS.xcodeproj/project.pbxproj
+index 5bee22f..c301778 100644
+--- a/XBMC-IOS.xcodeproj/project.pbxproj
++++ b/XBMC-IOS.xcodeproj/project.pbxproj
+@@ -173,6 +173,7 @@
+ 		DFA0F9291618E18A00611CBB /* DVDOverlayCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA0F9281618E18A00611CBB /* DVDOverlayCodec.cpp */; };
+ 		DFA6BE4313FECA010048CC11 /* AirPlayServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA6BE4113FECA010048CC11 /* AirPlayServer.cpp */; };
+ 		DFA6BE7713FED09C0048CC11 /* HttpParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA6BE7513FED09C0048CC11 /* HttpParser.cpp */; };
++		DFA8158E16713BA100E4E597 /* WakeOnAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA8158C16713BA100E4E597 /* WakeOnAccess.cpp */; };
+ 		DFAB04B013F8383300B70BFB /* InertialScrollingHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB04AE13F8383300B70BFB /* InertialScrollingHandler.cpp */; };
+ 		DFAB4BE615FCCA5000E1BAF6 /* TagLibVFSStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB4BE215FCCA5000E1BAF6 /* TagLibVFSStream.cpp */; };
+ 		DFAB4BE715FCCA5000E1BAF6 /* TagLoaderTagLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB4BE415FCCA5000E1BAF6 /* TagLoaderTagLib.cpp */; };
+@@ -1425,6 +1426,8 @@
+ 		DFA6BE4213FECA010048CC11 /* AirPlayServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirPlayServer.h; sourceTree = "<group>"; };
+ 		DFA6BE7513FED09C0048CC11 /* HttpParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HttpParser.cpp; sourceTree = "<group>"; };
+ 		DFA6BE7613FED09C0048CC11 /* HttpParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpParser.h; sourceTree = "<group>"; };
++		DFA8158C16713BA100E4E597 /* WakeOnAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WakeOnAccess.cpp; sourceTree = "<group>"; };
++		DFA8158D16713BA100E4E597 /* WakeOnAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WakeOnAccess.h; sourceTree = "<group>"; };
+ 		DFAB04AE13F8383300B70BFB /* InertialScrollingHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InertialScrollingHandler.cpp; sourceTree = "<group>"; };
+ 		DFAB04AF13F8383300B70BFB /* InertialScrollingHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InertialScrollingHandler.h; sourceTree = "<group>"; };
+ 		DFAB4BE215FCCA5000E1BAF6 /* TagLibVFSStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagLibVFSStream.cpp; sourceTree = "<group>"; };
+@@ -5842,6 +5845,8 @@
+ 				F56C864B131F42EB000AD0F6 /* TCPServer.h */,
+ 				F56C864E131F42EB000AD0F6 /* UdpClient.cpp */,
+ 				F56C864F131F42EB000AD0F6 /* UdpClient.h */,
++				DFA8158C16713BA100E4E597 /* WakeOnAccess.cpp */,
++				DFA8158D16713BA100E4E597 /* WakeOnAccess.h */,
+ 				F56C8650131F42EB000AD0F6 /* WebServer.cpp */,
+ 				F56C8651131F42EB000AD0F6 /* WebServer.h */,
+ 				F56C8652131F42EB000AD0F6 /* Zeroconf.cpp */,
+@@ -7718,6 +7723,7 @@
+ 				DF64FE5916C07AF700D028FB /* ViewDatabase.cpp in Sources */,
+ 				DFD5813116C829350008EEA0 /* DAVCommon.cpp in Sources */,
+ 				DFD5813216C829350008EEA0 /* DAVFile.cpp in Sources */,
++				DFA8158E16713BA100E4E597 /* WakeOnAccess.cpp in Sources */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+diff --git a/XBMC.xcodeproj/project.pbxproj b/XBMC.xcodeproj/project.pbxproj
+index ee73a42..bd7ebb2 100644
+--- a/XBMC.xcodeproj/project.pbxproj
++++ b/XBMC.xcodeproj/project.pbxproj
+@@ -445,6 +445,7 @@
+ 		DF93D7F61444B568007C6459 /* HDHomeRunDirectory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF93D7F51444B568007C6459 /* HDHomeRunDirectory.cpp */; };
+ 		DF98D98C1434F47D00A6EBE1 /* SkinVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF98D98A1434F47D00A6EBE1 /* SkinVariable.cpp */; };
+ 		DF9A71EE1639C8F6005ECB2E /* HTTPFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9A71EC1639C8F6005ECB2E /* HTTPFile.cpp */; };
++		DFA8157E16713B1200E4E597 /* WakeOnAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA8157C16713B1200E4E597 /* WakeOnAccess.cpp */; };
+ 		DFAB049813F8376700B70BFB /* InertialScrollingHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB049613F8376700B70BFB /* InertialScrollingHandler.cpp */; };
+ 		DFB02DEA16629DBA00F37752 /* PyContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB02DE816629DBA00F37752 /* PyContext.cpp */; };
+ 		DFB0F472161B747500D744F4 /* AddonsOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0F470161B747500D744F4 /* AddonsOperations.cpp */; };
+@@ -2016,6 +2017,8 @@
+ 		DF98D98B1434F47D00A6EBE1 /* SkinVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinVariable.h; sourceTree = "<group>"; };
+ 		DF9A71EC1639C8F6005ECB2E /* HTTPFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPFile.cpp; sourceTree = "<group>"; };
+ 		DF9A71ED1639C8F6005ECB2E /* HTTPFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPFile.h; sourceTree = "<group>"; };
++		DFA8157C16713B1200E4E597 /* WakeOnAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WakeOnAccess.cpp; sourceTree = "<group>"; };
++		DFA8157D16713B1200E4E597 /* WakeOnAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WakeOnAccess.h; sourceTree = "<group>"; };
+ 		DFAB049613F8376700B70BFB /* InertialScrollingHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InertialScrollingHandler.cpp; sourceTree = "<group>"; };
+ 		DFAB049713F8376700B70BFB /* InertialScrollingHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InertialScrollingHandler.h; sourceTree = "<group>"; };
+ 		DFB02DE816629DBA00F37752 /* PyContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PyContext.cpp; path = python/PyContext.cpp; sourceTree = "<group>"; };
+@@ -4005,6 +4008,8 @@
+ 				432D7CF512D870D600CE4C49 /* TCPServer.h */,
+ 				E38E1E8B0D25F9FD00618676 /* UdpClient.cpp */,
+ 				E38E1E8C0D25F9FD00618676 /* UdpClient.h */,
++				DFA8157C16713B1200E4E597 /* WakeOnAccess.cpp */,
++				DFA8157D16713B1200E4E597 /* WakeOnAccess.h */,
+ 				F5A7A859112908F00059D6AA /* WebServer.cpp */,
+ 				F5A7A85A112908F00059D6AA /* WebServer.h */,
+ 				E46F7C280F77217400C25D29 /* Zeroconf.cpp */,
+@@ -7746,6 +7751,7 @@
+ 				DF404A3A16B9896C00D8023E /* imagefactory.cpp in Sources */,
+ 				DFD5812516C828500008EEA0 /* DAVCommon.cpp in Sources */,
+ 				DFD5812616C828500008EEA0 /* DAVFile.cpp in Sources */,
++				DFA8157E16713B1200E4E597 /* WakeOnAccess.cpp in Sources */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
 diff --git a/language/English/strings.po b/language/English/strings.po
-index c145250..e08712d 100644
+index 5b79b46..a2d287b 100644
 --- a/language/English/strings.po
 +++ b/language/English/strings.po
-@@ -4436,7 +4436,51 @@ msgctxt "#13025"
+@@ -4478,7 +4478,51 @@ msgctxt "#13025"
  msgid "Joystick unplugged"
  msgstr ""
  
@@ -86,10 +206,10 @@ index c145250..e08712d 100644
  msgctxt "#13050"
  msgid "Running low on battery"
 diff --git a/project/VS2010Express/XBMC.vcxproj b/project/VS2010Express/XBMC.vcxproj
-index c1d4117..14889a6 100644
+index 6143060..1877586 100644
 --- a/project/VS2010Express/XBMC.vcxproj
 +++ b/project/VS2010Express/XBMC.vcxproj
-@@ -844,6 +844,7 @@
+@@ -846,6 +846,7 @@
      <ClCompile Include="..\..\xbmc\network\upnp\UPnPPlayer.cpp" />
      <ClCompile Include="..\..\xbmc\network\upnp\UPnPRenderer.cpp" />
      <ClCompile Include="..\..\xbmc\network\upnp\UPnPServer.cpp" />
@@ -97,7 +217,7 @@ index c1d4117..14889a6 100644
      <ClCompile Include="..\..\xbmc\network\WebServer.cpp" />
      <ClCompile Include="..\..\xbmc\network\websocket\WebSocket.cpp" />
      <ClCompile Include="..\..\xbmc\network\websocket\WebSocketManager.cpp" />
-@@ -1102,6 +1103,7 @@
+@@ -1106,6 +1107,7 @@
      <ClInclude Include="..\..\xbmc\network\upnp\UPnPPlayer.h" />
      <ClInclude Include="..\..\xbmc\network\upnp\UPnPRenderer.h" />
      <ClInclude Include="..\..\xbmc\network\upnp\UPnPServer.h" />
@@ -106,7 +226,7 @@ index c1d4117..14889a6 100644
      <ClInclude Include="..\..\xbmc\network\websocket\WebSocketManager.h" />
      <ClInclude Include="..\..\xbmc\network\websocket\WebSocketV13.h" />
 diff --git a/project/VS2010Express/XBMC.vcxproj.filters b/project/VS2010Express/XBMC.vcxproj.filters
-index 1488857..8438516 100644
+index 3b62970..c16a6fe 100644
 --- a/project/VS2010Express/XBMC.vcxproj.filters
 +++ b/project/VS2010Express/XBMC.vcxproj.filters
 @@ -1348,6 +1348,9 @@
@@ -119,7 +239,7 @@ index 1488857..8438516 100644
      <ClCompile Include="..\..\xbmc\network\WebServer.cpp">
        <Filter>network</Filter>
      </ClCompile>
-@@ -4242,6 +4245,9 @@
+@@ -4248,6 +4251,9 @@
      <ClInclude Include="..\..\xbmc\network\UdpClient.h">
        <Filter>network</Filter>
      </ClInclude>
@@ -130,10 +250,10 @@ index 1488857..8438516 100644
        <Filter>network</Filter>
      </ClInclude>
 diff --git a/xbmc/Application.cpp b/xbmc/Application.cpp
-index 32774ff..6a299e5 100644
+index 4afcf60..b8acf45 100644
 --- a/xbmc/Application.cpp
 +++ b/xbmc/Application.cpp
-@@ -5059,17 +5059,23 @@ void CApplication::Process()
+@@ -5058,17 +5058,23 @@ void CApplication::Process()
    // dispatch the messages generated by python or other threads to the current window
    g_windowManager.DispatchThreadMessages();
  
@@ -164,7 +284,7 @@ index 32774ff..6a299e5 100644
    if (g_application.m_bStop) return; //we're done, everything has been unloaded
  
    // check how far we are through playing the current item
-@@ -5090,6 +5096,14 @@ void CApplication::Process()
+@@ -5089,6 +5095,14 @@ void CApplication::Process()
    g_cpuInfo.getUsedPercentage(); // must call it to recalculate pct values
  }
  
@@ -180,7 +300,7 @@ index 32774ff..6a299e5 100644
  void CApplication::ProcessSlow()
  {
 diff --git a/xbmc/Application.h b/xbmc/Application.h
-index 92353cf..4bbaebe 100644
+index 3195c49..35dc562 100644
 --- a/xbmc/Application.h
 +++ b/xbmc/Application.h
 @@ -208,6 +208,7 @@ class CApplication : public CXBApplicationEx, public IPlayerCallback, public IMs
@@ -192,7 +312,7 @@ index 92353cf..4bbaebe 100644
    int GetVolume() const;
    void SetVolume(float iValue, bool isPercentage = true);
 diff --git a/xbmc/dbwrappers/mysqldataset.cpp b/xbmc/dbwrappers/mysqldataset.cpp
-index ab92a80..e80b700 100644
+index d4cd153..07f3875 100644
 --- a/xbmc/dbwrappers/mysqldataset.cpp
 +++ b/xbmc/dbwrappers/mysqldataset.cpp
 @@ -24,6 +24,7 @@
@@ -213,7 +333,7 @@ index ab92a80..e80b700 100644
      if (mysql_real_connect(conn, host.c_str(),login.c_str(),passwd.c_str(), NULL, atoi(port.c_str()),NULL,0) != NULL)
      {
 diff --git a/xbmc/filesystem/DirectoryFactory.cpp b/xbmc/filesystem/DirectoryFactory.cpp
-index 9fb2169..1fe45bf 100644
+index 0f5c393..3a2db9c 100644
 --- a/xbmc/filesystem/DirectoryFactory.cpp
 +++ b/xbmc/filesystem/DirectoryFactory.cpp
 @@ -44,6 +44,7 @@
@@ -233,10 +353,10 @@ index 9fb2169..1fe45bf 100644
    CFileItem item(strPath, false);
    IFileDirectory* pDir=CFileDirectoryFactory::Create(strPath, &item);
 diff --git a/xbmc/filesystem/FileFactory.cpp b/xbmc/filesystem/FileFactory.cpp
-index a042d39..0c8f986 100644
+index 1483e31..466d3d3 100644
 --- a/xbmc/filesystem/FileFactory.cpp
 +++ b/xbmc/filesystem/FileFactory.cpp
-@@ -95,6 +95,7 @@
+@@ -96,6 +96,7 @@
  #include "Application.h"
  #include "URL.h"
  #include "utils/log.h"
@@ -244,7 +364,7 @@ index a042d39..0c8f986 100644
  
  using namespace XFILE;
  
-@@ -114,6 +115,8 @@ IFile* CFileFactory::CreateLoader(const CStdString& strFileName)
+@@ -115,6 +116,8 @@ IFile* CFileFactory::CreateLoader(const CStdString& strFileName)
  
  IFile* CFileFactory::CreateLoader(const CURL& url)
  {
@@ -254,7 +374,7 @@ index a042d39..0c8f986 100644
    strProtocol.MakeLower();
  
 diff --git a/xbmc/main/main.cpp b/xbmc/main/main.cpp
-index 8fe4226..81181a0 100644
+index 4ee13c3..319bc0e 100644
 --- a/xbmc/main/main.cpp
 +++ b/xbmc/main/main.cpp
 @@ -66,13 +66,6 @@ int main(int argc, char* argv[])
@@ -283,8 +403,136 @@ index e2ffb0b..4e680fc 100644
  SRCS += WebServer.cpp
  SRCS += ZeroconfBrowser.cpp
  SRCS += Zeroconf.cpp
+diff --git a/xbmc/network/Network.cpp b/xbmc/network/Network.cpp
+index 976056a..4ee4fc0 100644
+--- a/xbmc/network/Network.cpp
++++ b/xbmc/network/Network.cpp
+@@ -279,6 +279,123 @@ bool CNetwork::WakeOnLan(const char* mac)
+   return true;
+ }
+ 
++// ping helper
++static const char* ConnectHostPort(SOCKET soc, const struct sockaddr_in& addr, struct timeval& timeOut, bool tryRead)
++{
++  // set non-blocking
++#ifdef _MSC_VER
++  u_long nonblocking = 1;
++  int result = ioctlsocket(soc, FIONBIO, &nonblocking);
++#else
++  int result = fcntl(soc, F_SETFL, fcntl(soc, F_GETFL) | O_NONBLOCK);
++#endif
++
++  if (result != 0)
++    return "set non-blocking option failed";
++
++  result = connect(soc, (struct sockaddr *)&addr, sizeof(addr)); // non-blocking connect, will fail ..
++
++  if (result < 0)
++  {
++#ifdef _MSC_VER
++    if (WSAGetLastError() != WSAEWOULDBLOCK)
++#else
++    if (errno != EINPROGRESS)
++#endif
++      return "unexpected connect fail";
++
++    { // wait for connect to complete
++      fd_set wset;
++      FD_ZERO(&wset); 
++      FD_SET(soc, &wset); 
++
++      result = select(FD_SETSIZE, 0, &wset, 0, &timeOut);
++    }
++
++    if (result < 0)
++      return "select fail";
++
++    if (result == 0) // timeout
++      return ""; // no error
++
++    { // verify socket connection state
++      int err_code = -1;
++      socklen_t code_len = sizeof (err_code);
++
++      result = getsockopt(soc, SOL_SOCKET, SO_ERROR, (char*) &err_code, &code_len);
++
++      if (result != 0)
++        return "getsockopt fail";
++
++      if (err_code != 0)
++        return ""; // no error, just not connected
++    }
++  }
++
++  if (tryRead)
++  {
++    fd_set rset;
++    FD_ZERO(&rset); 
++    FD_SET(soc, &rset); 
++
++    result = select(FD_SETSIZE, &rset, 0, 0, &timeOut);
++
++    if (result > 0)
++    {
++      char message [32];
++
++      result = recv(soc, message, sizeof(message), 0);
++    }
++
++    if (result == 0)
++      return ""; // no reply yet
++
++    if (result < 0)
++      return "recv fail";
++  }
++
++  return 0; // success
++}
++
++bool CNetwork::PingHost(unsigned long ipaddr, unsigned short port, unsigned int timeOutMs, bool readability_check)
++{
++  if (port == 0) // use icmp ping
++    return PingHost (ipaddr, timeOutMs);
++
++  struct sockaddr_in addr; 
++  addr.sin_family = AF_INET; 
++  addr.sin_port = htons(port); 
++  addr.sin_addr.s_addr = ipaddr; 
++
++  SOCKET soc = socket(AF_INET, SOCK_STREAM, 0); 
++
++  const char* err_msg = "invalid socket";
++
++  if (soc != INVALID_SOCKET)
++  {
++    struct timeval tmout; 
++    tmout.tv_sec = timeOutMs / 1000; 
++    tmout.tv_usec = (timeOutMs % 1000) * 1000; 
++
++    err_msg = ConnectHostPort (soc, addr, tmout, readability_check);
++
++    (void) closesocket (soc);
++  }
++
++  if (err_msg && *err_msg)
++  {
++#ifdef _MSC_VER
++    CStdString sock_err = WUSysMsg(WSAGetLastError());
++#else
++    CStdString sock_err = strerror(errno);
++#endif
++
++    CLog::Log(LOGERROR, "%s(%s:%d) - %s (%s)", __FUNCTION__, inet_ntoa(addr.sin_addr), port, err_msg, sock_err.c_str());
++  }
++
++  return err_msg == 0;
++}
++
+ void CNetwork::StartServices()
+ {
+ #ifdef HAS_WEB_SERVER
 diff --git a/xbmc/network/Network.h b/xbmc/network/Network.h
-index 1aaa764..8d46a6e 100644
+index 3f2bdf3..69411f8 100644
 --- a/xbmc/network/Network.h
 +++ b/xbmc/network/Network.h
 @@ -62,6 +62,8 @@ class CNetworkInterface
@@ -296,11 +544,12 @@ index 1aaa764..8d46a6e 100644
     virtual CStdString GetCurrentIPAddress() = 0;
     virtual CStdString GetCurrentNetmask() = 0;
     virtual CStdString GetCurrentDefaultGateway(void) = 0;
-@@ -110,6 +112,9 @@ class CNetwork
+@@ -110,6 +112,10 @@ class CNetwork
     // Return true if the magic packet was send
     bool WakeOnLan(const char *mac);
  
 +   // Return true if host replies to ping
++   bool PingHost(unsigned long host, unsigned short port, unsigned int timeout_ms = 2000, bool readability_check = false);
 +   virtual bool PingHost(unsigned long host, unsigned int timeout_ms = 2000) = 0;
 +
     // Get/set the nameserver(s)
@@ -308,12 +557,12 @@ index 1aaa764..8d46a6e 100644
     virtual void SetNameServers(std::vector<CStdString> nameServers) = 0;
 diff --git a/xbmc/network/WakeOnAccess.cpp b/xbmc/network/WakeOnAccess.cpp
 new file mode 100644
-index 0000000..d78cd5b
+index 0000000..b9ac0e5
 --- /dev/null
 +++ b/xbmc/network/WakeOnAccess.cpp
-@@ -0,0 +1,659 @@
+@@ -0,0 +1,679 @@
 +/*
-+ *      Copyright (C) 2005-2012 Team XBMC
++ *      Copyright (C) 2005-2013 Team XBMC
 + *      http://www.xbmc.org
 + *
 + *  This Program is free software; you can redistribute it and/or modify
@@ -385,6 +634,7 @@ index 0000000..d78cd5b
 +  , wait_online1_sec(DEFAULT_WAIT_FOR_ONLINE_SEC_1)
 +  , wait_online2_sec(DEFAULT_WAIT_FOR_ONLINE_SEC_2)
 +  , wait_services_sec(DEFAULT_WAIT_FOR_SERVICES_SEC)
++  , ping_port(0), ping_mode(0)
 +{
 +  nextWake = CDateTime::GetCurrentDateTime();
 +
@@ -392,12 +642,24 @@ index 0000000..d78cd5b
 +    nextWake += timeout;
 +}
 +
-+CWakeOnAccess::CMACDiscoveryJob::CMACDiscoveryJob(const CStdString& host)
-+  : m_host(host)
-+{
-+}
++//**
 +
-+bool CWakeOnAccess::CMACDiscoveryJob::DoWork()
++class CMACDiscoveryJob : public CJob
++{
++public:
++  CMACDiscoveryJob(const CStdString& host) : m_host(host) {}
++
++  virtual bool DoWork();
++
++  const CStdString& GetMAC() const { return m_macAddres; }
++  const CStdString& GetHost() const { return m_host; }
++
++private:
++  CStdString m_macAddres;
++  CStdString m_host;
++};
++
++bool CMACDiscoveryJob::DoWork()
 +{
 +  unsigned long ipAddress = HostToIP(m_host);
 +
@@ -417,15 +679,7 @@ index 0000000..d78cd5b
 +  return false;
 +}
 +
-+const CStdString& CWakeOnAccess::CMACDiscoveryJob::GetMAC() const
-+{
-+  return m_macAddres;
-+}
-+
-+const CStdString& CWakeOnAccess::CMACDiscoveryJob::GetHost() const
-+{
-+  return m_host;
-+}
++//**
 +
 +class WaitCondition
 +{
@@ -458,6 +712,8 @@ index 0000000..d78cd5b
 +      g_application.ProcessSlowEnable(true);
 +    }
 +  }
++
++  bool HasDialog() const { return m_dialog != 0; }
 +
 +  enum wait_result { TimedOut, Canceled, Success };
 +
@@ -530,56 +786,59 @@ index 0000000..d78cd5b
 +class PingResponseWaiter : public WaitCondition, private IJobCallback
 +{
 +public:
-+  PingResponseWaiter (const CStdString& host) : m_hostOnline (false)
++  PingResponseWaiter (bool async, const CWakeOnAccess::WakeUpEntry& server) 
++    : m_server(server), m_jobId(0), m_hostOnline(false)
 +  {
-+    m_job = new CHostProberJob(host);
-+    CSingleLock lock(m_section);
-+    m_jobId = CJobManager::GetInstance().AddJob(m_job, this);
++    if (async)
++    {
++      CJob* job = new CHostProberJob(this);
++      m_jobId = CJobManager::GetInstance().AddJob(job, this);
++    }
 +  }
 +  ~PingResponseWaiter()
 +  {
-+    CSingleLock lock(m_section);
-+    if (m_job)
-+      CJobManager::GetInstance().CancelJob(m_jobId);
++    CJobManager::GetInstance().CancelJob(m_jobId);
 +  }
 +  virtual bool SuccessWaiting () const
 +  {
-+    return m_hostOnline;
++    return m_jobId ? m_hostOnline : Ping();
 +  }
 +
 +  virtual void OnJobComplete(unsigned int jobID, bool success, CJob *job)
 +  {
 +    m_hostOnline = success;
-+    CSingleLock lock(m_section);
-+    m_job = 0;
++  }
++
++  bool Ping () const
++  {
++    ULONG dst_ip = HostToIP(m_server.host);
++
++    return g_application.getNetwork().PingHost(dst_ip, m_server.ping_port, 2000, m_server.ping_mode & 1);
 +  }
 +
 +private:
 +  class CHostProberJob : public CJob
 +  {
 +    public:
-+      CHostProberJob(const CStdString& host) : m_host (host) {}
++      CHostProberJob(const PingResponseWaiter* parent) : m_parent (parent) {}
 +
 +      virtual bool DoWork()
 +      {
 +        while (!ShouldCancel(0,0))
 +        {
-+          ULONG dst_ip = HostToIP(m_host);
-+
-+          if (g_application.getNetwork().PingHost(dst_ip, 2000))
++          if (m_parent->Ping())
 +            return true;
 +        }
 +        return false;
 +      }
 +
 +    private:
-+      CStdString m_host;
++      const PingResponseWaiter* m_parent;
 +  };
 +
-+  bool m_hostOnline;
-+  CHostProberJob* m_job;
++  const CWakeOnAccess::WakeUpEntry& m_server;
 +  unsigned int m_jobId;
-+  CCriticalSection m_section;
++  bool m_hostOnline;
 +};
 +
 +//
@@ -688,7 +947,7 @@ index 0000000..d78cd5b
 +  {
 +    ULONG dst_ip = HostToIP(server.host);
 +
-+    if (g_application.getNetwork().PingHost(dst_ip, 500)) // quick ping with short timeout to not block too long
++    if (g_application.getNetwork().PingHost(dst_ip, server.ping_port, 500)) // quick ping with short timeout to not block too long
 +    {
 +      CLog::Log(LOGNOTICE,"WakeOnAccess success exit, server already running");
 +      return;
@@ -705,7 +964,7 @@ index 0000000..d78cd5b
 +  }
 +
 +  {
-+    PingResponseWaiter waitObj (server.host); // wait for ping response ..
++    PingResponseWaiter waitObj (dlg.HasDialog(), server); // wait for ping response ..
 +
 +    ProgressDialogHelper::wait_result 
 +      result = dlg.ShowAndWait (waitObj, server.wait_online1_sec, LOCALIZED(13030));
@@ -917,6 +1176,12 @@ index 0000000..d78cd5b
 +       CLog::Log(LOGERROR, "%s - Missing <mac> tag or it's empty", __FUNCTION__);
 +    else
 +    {
++      if (XMLUtils::GetInt(pWakeUp, "pingport", tmp, 0, USHRT_MAX))
++        entry.ping_port = (unsigned short) tmp;
++
++      if (XMLUtils::GetInt(pWakeUp, "pingmode", tmp, 0, USHRT_MAX))
++        entry.ping_mode = (unsigned short) tmp;
++
 +      if (XMLUtils::GetInt(pWakeUp, "timeout", tmp, 10, 12 * 60 * 60))
 +        entry.timeout.SetDateTimeSpan (0, 0, 0, tmp);
 +
@@ -932,6 +1197,8 @@ index 0000000..d78cd5b
 +      CLog::Log(LOGNOTICE,"  Registering wakeup entry:");
 +      CLog::Log(LOGNOTICE,"    HostName        : %s", entry.host.c_str());
 +      CLog::Log(LOGNOTICE,"    MacAddress      : %s", entry.mac.c_str());
++      CLog::Log(LOGNOTICE,"    PingPort        : %d", entry.ping_port);
++      CLog::Log(LOGNOTICE,"    PingMode        : %d", entry.ping_mode);
 +      CLog::Log(LOGNOTICE,"    Timeout         : %d (sec)", GetTotalSeconds(entry.timeout));
 +      CLog::Log(LOGNOTICE,"    WaitForOnline   : %d (sec)", entry.wait_online1_sec);
 +      CLog::Log(LOGNOTICE,"    WaitForOnlineEx : %d (sec)", entry.wait_online2_sec);
@@ -962,6 +1229,8 @@ index 0000000..d78cd5b
 +    {
 +      XMLUtils::SetString(pWakeUpNode, "host", i->host);
 +      XMLUtils::SetString(pWakeUpNode, "mac", i->mac);
++      XMLUtils::SetInt(pWakeUpNode, "pingport", i->ping_port);
++      XMLUtils::SetInt(pWakeUpNode, "pingmode", i->ping_mode);
 +      XMLUtils::SetInt(pWakeUpNode, "timeout", GetTotalSeconds(i->timeout));
 +      XMLUtils::SetInt(pWakeUpNode, "waitonline", i->wait_online1_sec);
 +      XMLUtils::SetInt(pWakeUpNode, "waitonline2", i->wait_online2_sec);
@@ -973,12 +1242,12 @@ index 0000000..d78cd5b
 +}
 diff --git a/xbmc/network/WakeOnAccess.h b/xbmc/network/WakeOnAccess.h
 new file mode 100644
-index 0000000..ee3bd9e
+index 0000000..2a1d853
 --- /dev/null
 +++ b/xbmc/network/WakeOnAccess.h
-@@ -0,0 +1,90 @@
+@@ -0,0 +1,80 @@
 +/*
-+ *      Copyright (C) 2005-2012 Team XBMC
++ *      Copyright (C) 2005-2013 Team XBMC
 + *      http://www.xbmc.org
 + *
 + *  This Program is free software; you can redistribute it and/or modify
@@ -1022,27 +1291,7 @@ index 0000000..ee3bd9e
 +  virtual void OnJobComplete(unsigned int jobID, bool success, CJob *job);
 +
 +  void LoadFromXML();
-+private:
-+  void AddHostsFromShare(const CMediaSource& source, std::vector<std::string>& hosts);
-+  void AddHostsFromShares(const VECSOURCES& sources, std::vector<std::string>& hosts);
 +
-+  CStdString GetSettingFile();
-+  void SaveToXML();
-+
-+  class CMACDiscoveryJob : public CJob
-+  {
-+  public:
-+    CMACDiscoveryJob(const CStdString& host);
-+
-+    virtual bool DoWork();
-+
-+    const CStdString& GetMAC() const;
-+    const CStdString& GetHost() const;
-+  private:
-+    CStdString m_macAddres;
-+    CStdString m_host;
-+  };
-+  
 +  // struct to keep per host settings
 +  struct WakeUpEntry
 +  {
@@ -1055,8 +1304,18 @@ index 0000000..ee3bd9e
 +    unsigned int wait_online2_sec; // extended wait
 +    unsigned int wait_services_sec;
 +
++    unsigned short ping_port; // where to ping
++    unsigned short ping_mode; // how to ping
++
 +    CDateTime nextWake;
 +  };
++
++private:
++  void AddHostsFromShare(const CMediaSource& source, std::vector<std::string>& hosts);
++  void AddHostsFromShares(const VECSOURCES& sources, std::vector<std::string>& hosts);
++
++  CStdString GetSettingFile();
++  void SaveToXML();
 +
 +  typedef std::vector<WakeUpEntry> EntriesVector;
 +  EntriesVector m_entries;
@@ -1068,10 +1327,24 @@ index 0000000..ee3bd9e
 +  void WakeUpHost(const WakeUpEntry& server);
 +};
 diff --git a/xbmc/network/linux/NetworkLinux.cpp b/xbmc/network/linux/NetworkLinux.cpp
-index 582d3e3..53d02eb 100644
+index dc7ce84..108ce20 100644
 --- a/xbmc/network/linux/NetworkLinux.cpp
 +++ b/xbmc/network/linux/NetworkLinux.cpp
-@@ -520,6 +520,67 @@ void CNetworkLinux::SetNameServers(std::vector<CStdString> nameServers)
+@@ -37,6 +37,13 @@
+   #include <sys/sockio.h>
+   #include <net/if.h>
+   #include <net/if_dl.h>
++#if defined(TARGET_DARWIN_OSX)
++  #include <net/if_types.h>
++  #include <net/route.h>
++  #include <netinet/if_ether.h>
++#else //IOS
++  #include "network/osx/ioshacks.h"
++#endif
+   #include <ifaddrs.h>
+ #elif defined(TARGET_FREEBSD)
+   #include <sys/sockio.h>
+@@ -520,6 +527,118 @@ void CNetworkLinux::SetNameServers(std::vector<CStdString> nameServers)
  #endif
  }
  
@@ -1099,6 +1372,56 @@ index 582d3e3..53d02eb 100644
 +  return result == 0;
 +}
 +
++#if defined TARGET_DARWIN
++bool CNetworkInterfaceLinux::GetHostMacAddress(unsigned long host_ip, CStdString& mac)
++{
++  bool ret = false;
++  size_t needed;
++  char *buf, *next;
++  struct rt_msghdr *rtm;
++  struct sockaddr_inarp *sin;
++  struct sockaddr_dl *sdl;
++  int mib[6];
++  
++  mac = "";
++  
++  mib[0] = CTL_NET;
++  mib[1] = PF_ROUTE;
++  mib[2] = 0;
++  mib[3] = AF_INET;
++  mib[4] = NET_RT_FLAGS;
++  mib[5] = RTF_LLINFO;
++  
++  if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), NULL, &needed, NULL, 0) == 0)
++  {   
++    if (buf = (char*)malloc(needed))
++    {      
++      if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), buf, &needed, NULL, 0) == 0)
++      {        
++        for (next = buf; next < buf + needed; next += rtm->rtm_msglen) 
++        {
++          
++          rtm = (struct rt_msghdr *)next;
++          sin = (struct sockaddr_inarp *)(rtm + 1);
++          sdl = (struct sockaddr_dl *)(sin + 1);
++          
++          if (host_ip != sin->sin_addr.s_addr || sdl->sdl_alen < 6)
++            continue;
++          
++          u_char *cp = (u_char*)LLADDR(sdl);
++          
++          mac.Format("%02X:%02X:%02X:%02X:%02X:%02X",
++                     cp[0], cp[1], cp[2], cp[3], cp[4], cp[5]);
++          ret = true;
++          break;
++        }
++      }
++      free(buf);
++    }
++  }
++  return ret;
++}
++#else
 +bool CNetworkInterfaceLinux::GetHostMacAddress(unsigned long host_ip, CStdString& mac)
 +{
 +  struct arpreq areq;
@@ -1135,12 +1458,13 @@ index 582d3e3..53d02eb 100644
 +
 +  return false;
 +}
++#endif
 +
  std::vector<NetworkAccessPoint> CNetworkInterfaceLinux::GetAccessPoints(void)
  {
     std::vector<NetworkAccessPoint> result;
 diff --git a/xbmc/network/linux/NetworkLinux.h b/xbmc/network/linux/NetworkLinux.h
-index df09498..c941d25 100644
+index 7031b6e..be4218e 100644
 --- a/xbmc/network/linux/NetworkLinux.h
 +++ b/xbmc/network/linux/NetworkLinux.h
 @@ -42,6 +42,8 @@ class CNetworkInterfaceLinux : public CNetworkInterface
@@ -1162,8 +1486,84 @@ index df09498..c941d25 100644
     // Get/set the nameserver(s)
     virtual std::vector<CStdString> GetNameServers(void);
     virtual void SetNameServers(std::vector<CStdString> nameServers);
+diff --git a/xbmc/network/osx/ioshacks.h b/xbmc/network/osx/ioshacks.h
+new file mode 100644
+index 0000000..c2c64ff
+--- /dev/null
++++ b/xbmc/network/osx/ioshacks.h
+@@ -0,0 +1,70 @@
++/*
++ *      Copyright (C) 2005-2013 Team XBMC
++ *      http://www.xbmc.org
++ *
++ *  This Program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2, or (at your option)
++ *  any later version.
++ *
++ *  This Program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with XBMC; see the file COPYING.  If not, see
++ *  <http://www.gnu.org/licenses/>.
++ *
++ */
++
++// needed for CNetworkInterfaceLinux::GetHostMacAddress and taken from osx sdk
++// net/if_types.h net/route.h netinet/if_ether.h
++
++/*
++ * These numbers are used by reliable protocols for determining
++ * retransmission behavior and are included in the routing structure.
++ */
++struct rt_metrics {
++	u_int32_t	rmx_locks;	/* Kernel must leave these values alone */
++	u_int32_t	rmx_mtu;	/* MTU for this path */
++	u_int32_t	rmx_hopcount;	/* max hops expected */
++	int32_t		rmx_expire;	/* lifetime for route, e.g. redirect */
++	u_int32_t	rmx_recvpipe;	/* inbound delay-bandwidth product */
++	u_int32_t	rmx_sendpipe;	/* outbound delay-bandwidth product */
++	u_int32_t	rmx_ssthresh;	/* outbound gateway buffer limit */
++	u_int32_t	rmx_rtt;	/* estimated round trip time */
++	u_int32_t	rmx_rttvar;	/* estimated rtt variance */
++	u_int32_t	rmx_pksent;	/* packets sent using this route */
++	u_int32_t	rmx_filler[4];	/* will be used for T/TCP later */
++};
++
++/*
++ * Structures for routing messages.
++ */
++struct rt_msghdr {
++	u_short	rtm_msglen;		/* to skip over non-understood messages */
++	u_char	rtm_version;		/* future binary compatibility */
++	u_char	rtm_type;		/* message type */
++	u_short	rtm_index;		/* index for associated ifp */
++	int	rtm_flags;		/* flags, incl. kern & message, e.g. DONE */
++	int	rtm_addrs;		/* bitmask identifying sockaddrs in msg */
++	pid_t	rtm_pid;		/* identify sender */
++	int	rtm_seq;		/* for sender to identify action */
++	int	rtm_errno;		/* why failed */
++	int	rtm_use;		/* from rtentry */
++	u_int32_t rtm_inits;		/* which metrics we are initializing */
++	struct rt_metrics rtm_rmx;	/* metrics themselves */
++};
++struct sockaddr_inarp {
++	u_char	sin_len;
++	u_char	sin_family;
++	u_short sin_port;
++	struct	in_addr sin_addr;
++	struct	in_addr sin_srcaddr;
++	u_short	sin_tos;
++	u_short	sin_other;
++#define SIN_PROXY 1
++};
++#define RTF_LLINFO	0x400		/* generated by link layer (e.g. ARP) */
++// --- END
 diff --git a/xbmc/network/windows/NetworkWin32.cpp b/xbmc/network/windows/NetworkWin32.cpp
-index 04b9917..74cd349 100644
+index f19a229..82fe5a8 100644
 --- a/xbmc/network/windows/NetworkWin32.cpp
 +++ b/xbmc/network/windows/NetworkWin32.cpp
 @@ -19,6 +19,8 @@
@@ -1235,7 +1635,7 @@ index 04b9917..74cd349 100644
  {
     std::vector<NetworkAccessPoint> result;
 diff --git a/xbmc/network/windows/NetworkWin32.h b/xbmc/network/windows/NetworkWin32.h
-index 125ab58..975bba5 100644
+index d163d8f..fd75508 100644
 --- a/xbmc/network/windows/NetworkWin32.h
 +++ b/xbmc/network/windows/NetworkWin32.h
 @@ -45,6 +45,8 @@ class CNetworkInterfaceWin32 : public CNetworkInterface
@@ -1258,10 +1658,10 @@ index 125ab58..975bba5 100644
     virtual std::vector<CStdString> GetNameServers(void);
     virtual void SetNameServers(std::vector<CStdString> nameServers);
 diff --git a/xbmc/settings/GUISettings.cpp b/xbmc/settings/GUISettings.cpp
-index b38d467..b525592 100644
+index e92a82d..28b39f9 100644
 --- a/xbmc/settings/GUISettings.cpp
 +++ b/xbmc/settings/GUISettings.cpp
-@@ -609,6 +609,7 @@ void CGUISettings::Initialize()
+@@ -617,6 +617,7 @@ void CGUISettings::Initialize()
  #endif
      AddInt(pwm, "powermanagement.shutdownstate", 13008, POWERSTATE_QUIT, shutdown, SPIN_CONTROL_TEXT);
    }
@@ -1270,7 +1670,7 @@ index b38d467..b525592 100644
    CSettingsCategory* dbg = AddCategory(SETTINGS_SYSTEM, "debug", 14092);
    AddBool(dbg, "debug.showloginfo", 20191, false);
 diff --git a/xbmc/settings/GUIWindowSettingsCategory.cpp b/xbmc/settings/GUIWindowSettingsCategory.cpp
-index eb3ddbd..e98d697 100644
+index cb94f01..42fe65d 100644
 --- a/xbmc/settings/GUIWindowSettingsCategory.cpp
 +++ b/xbmc/settings/GUIWindowSettingsCategory.cpp
 @@ -79,6 +79,7 @@
@@ -1281,7 +1681,7 @@ index eb3ddbd..e98d697 100644
  #include "peripherals/Peripherals.h"
  #include "peripherals/dialogs/GUIDialogPeripheralManager.h"
  #include "peripherals/devices/PeripheralImon.h"
-@@ -1989,6 +1990,12 @@ void CGUIWindowSettingsCategory::OnSettingChanged(BaseSettingControlPtr pSetting
+@@ -1990,6 +1991,12 @@ void CGUIWindowSettingsCategory::OnSettingChanged(BaseSettingControlPtr pSetting
        }
      }
    }
@@ -1295,7 +1695,7 @@ index eb3ddbd..e98d697 100644
    UpdateSettings();
  }
 diff --git a/xbmc/settings/Settings.cpp b/xbmc/settings/Settings.cpp
-index 8a430ad..408e31a 100644
+index 3db721a..45fbe30 100644
 --- a/xbmc/settings/Settings.cpp
 +++ b/xbmc/settings/Settings.cpp
 @@ -51,6 +51,7 @@
@@ -1334,566 +1734,3 @@ index 8a430ad..408e31a 100644
      return SaveSources();
 -- 
 1.7.10
-
-
-From 22e4ea465ad81d5853c979e6a3079c3e1a7cd7b3 Mon Sep 17 00:00:00 2001
-From: "t4.ravenbird" <t4.ravenbird@gmail.com>
-Date: Fri, 8 Feb 2013 21:09:24 +0100
-Subject: [PATCH 2/3] [osx/ios/atv2] sync projects and mac discovery - by
- memphiz
-
----
- XBMC-ATV2.xcodeproj/project.pbxproj |    6 +++
- XBMC-IOS.xcodeproj/project.pbxproj  |    6 +++
- XBMC.xcodeproj/project.pbxproj      |    6 +++
- xbmc/network/linux/NetworkLinux.cpp |   58 +++++++++++++++++++++++++++++
- xbmc/network/osx/ioshacks.h         |   70 +++++++++++++++++++++++++++++++++++
- 5 files changed, 146 insertions(+)
- create mode 100644 xbmc/network/osx/ioshacks.h
-
-diff --git a/XBMC-ATV2.xcodeproj/project.pbxproj b/XBMC-ATV2.xcodeproj/project.pbxproj
-index 8284448..2586257 100644
---- a/XBMC-ATV2.xcodeproj/project.pbxproj
-+++ b/XBMC-ATV2.xcodeproj/project.pbxproj
-@@ -172,6 +172,7 @@
-  	DFA0F9551618E1CD00611CBB /* DVDOverlayCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA0F9541618E1CD00611CBB /* DVDOverlayCodec.cpp */; };
- 		DFA6BE8713FED2A10048CC11 /* AirPlayServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA6BE8513FED2A10048CC11 /* AirPlayServer.cpp */; };
- 		DFA6BE8A13FED2B40048CC11 /* HttpParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA6BE8813FED2B40048CC11 /* HttpParser.cpp */; };
-+		DFA815A216713BC400E4E597 /* WakeOnAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA815A016713BC400E4E597 /* WakeOnAccess.cpp */; };
- 		DFAB04C113F8385F00B70BFB /* InertialScrollingHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB04BF13F8385F00B70BFB /* InertialScrollingHandler.cpp */; };
- 		DFAB4C0F15FCCB4300E1BAF6 /* TagLibVFSStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB4C0B15FCCB4300E1BAF6 /* TagLibVFSStream.cpp */; };
- 		DFAB4C1015FCCB4300E1BAF6 /* TagLoaderTagLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB4C0D15FCCB4300E1BAF6 /* TagLoaderTagLib.cpp */; };
-@@ -1418,6 +1419,8 @@
- 		DFA6BE8613FED2A10048CC11 /* AirPlayServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirPlayServer.h; sourceTree = "<group>"; };
- 		DFA6BE8813FED2B40048CC11 /* HttpParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HttpParser.cpp; sourceTree = "<group>"; };
- 		DFA6BE8913FED2B40048CC11 /* HttpParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpParser.h; sourceTree = "<group>"; };
-+		DFA815A016713BC400E4E597 /* WakeOnAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WakeOnAccess.cpp; sourceTree = "<group>"; };
-+		DFA815A116713BC400E4E597 /* WakeOnAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WakeOnAccess.h; sourceTree = "<group>"; };
- 		DFAB04BF13F8385F00B70BFB /* InertialScrollingHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InertialScrollingHandler.cpp; sourceTree = "<group>"; };
- 		DFAB04C013F8385F00B70BFB /* InertialScrollingHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InertialScrollingHandler.h; sourceTree = "<group>"; };
- 		DFAB4C0B15FCCB4300E1BAF6 /* TagLibVFSStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagLibVFSStream.cpp; sourceTree = "<group>"; };
-@@ -5470,6 +5473,8 @@
- 				F56C7668131EC153000AD0F6 /* TCPServer.h */,
- 				F56C766B131EC153000AD0F6 /* UdpClient.cpp */,
- 				F56C766C131EC153000AD0F6 /* UdpClient.h */,
-+				DFA815A016713BC400E4E597 /* WakeOnAccess.cpp */,
-+				DFA815A116713BC400E4E597 /* WakeOnAccess.h */,
- 				F56C766D131EC153000AD0F6 /* WebServer.cpp */,
- 				F56C766E131EC153000AD0F6 /* WebServer.h */,
- 				F56C766F131EC153000AD0F6 /* Zeroconf.cpp */,
-@@ -7675,6 +7680,7 @@
- 				DF64FE6C16C07B2C00D028FB /* GUIViewControl.cpp in Sources */,
- 				DF64FE6D16C07B2C00D028FB /* GUIViewState.cpp in Sources */,
- 				DF64FE6F16C07B2C00D028FB /* ViewDatabase.cpp in Sources */,
-+				DFA815A216713BC400E4E597 /* WakeOnAccess.cpp in Sources */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-diff --git a/XBMC-IOS.xcodeproj/project.pbxproj b/XBMC-IOS.xcodeproj/project.pbxproj
-index d0677f1..33c6258 100644
---- a/XBMC-IOS.xcodeproj/project.pbxproj
-+++ b/XBMC-IOS.xcodeproj/project.pbxproj
-@@ -173,6 +173,7 @@
- 		DFA0F9291618E18A00611CBB /* DVDOverlayCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA0F9281618E18A00611CBB /* DVDOverlayCodec.cpp */; };
- 		DFA6BE4313FECA010048CC11 /* AirPlayServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA6BE4113FECA010048CC11 /* AirPlayServer.cpp */; };
- 		DFA6BE7713FED09C0048CC11 /* HttpParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA6BE7513FED09C0048CC11 /* HttpParser.cpp */; };
-+		DFA8158E16713BA100E4E597 /* WakeOnAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA8158C16713BA100E4E597 /* WakeOnAccess.cpp */; };
- 		DFAB04B013F8383300B70BFB /* InertialScrollingHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB04AE13F8383300B70BFB /* InertialScrollingHandler.cpp */; };
- 		DFAB4BE615FCCA5000E1BAF6 /* TagLibVFSStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB4BE215FCCA5000E1BAF6 /* TagLibVFSStream.cpp */; };
- 		DFAB4BE715FCCA5000E1BAF6 /* TagLoaderTagLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB4BE415FCCA5000E1BAF6 /* TagLoaderTagLib.cpp */; };
-@@ -1423,6 +1424,8 @@
- 		DFA6BE4213FECA010048CC11 /* AirPlayServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirPlayServer.h; sourceTree = "<group>"; };
- 		DFA6BE7513FED09C0048CC11 /* HttpParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HttpParser.cpp; sourceTree = "<group>"; };
- 		DFA6BE7613FED09C0048CC11 /* HttpParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpParser.h; sourceTree = "<group>"; };
-+		DFA8158C16713BA100E4E597 /* WakeOnAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WakeOnAccess.cpp; sourceTree = "<group>"; };
-+		DFA8158D16713BA100E4E597 /* WakeOnAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WakeOnAccess.h; sourceTree = "<group>"; };
- 		DFAB04AE13F8383300B70BFB /* InertialScrollingHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InertialScrollingHandler.cpp; sourceTree = "<group>"; };
- 		DFAB04AF13F8383300B70BFB /* InertialScrollingHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InertialScrollingHandler.h; sourceTree = "<group>"; };
- 		DFAB4BE215FCCA5000E1BAF6 /* TagLibVFSStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagLibVFSStream.cpp; sourceTree = "<group>"; };
-@@ -5832,6 +5835,8 @@
- 				F56C864B131F42EB000AD0F6 /* TCPServer.h */,
- 				F56C864E131F42EB000AD0F6 /* UdpClient.cpp */,
- 				F56C864F131F42EB000AD0F6 /* UdpClient.h */,
-+				DFA8158C16713BA100E4E597 /* WakeOnAccess.cpp */,
-+				DFA8158D16713BA100E4E597 /* WakeOnAccess.h */,
- 				F56C8650131F42EB000AD0F6 /* WebServer.cpp */,
- 				F56C8651131F42EB000AD0F6 /* WebServer.h */,
- 				F56C8652131F42EB000AD0F6 /* Zeroconf.cpp */,
-@@ -7706,6 +7711,7 @@
- 				DF64FE5616C07AF700D028FB /* GUIViewControl.cpp in Sources */,
- 				DF64FE5716C07AF700D028FB /* GUIViewState.cpp in Sources */,
- 				DF64FE5916C07AF700D028FB /* ViewDatabase.cpp in Sources */,
-+				DFA8158E16713BA100E4E597 /* WakeOnAccess.cpp in Sources */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-diff --git a/XBMC.xcodeproj/project.pbxproj b/XBMC.xcodeproj/project.pbxproj
-index cbf0758..48c2fa5 100644
---- a/XBMC.xcodeproj/project.pbxproj
-+++ b/XBMC.xcodeproj/project.pbxproj
-@@ -445,6 +445,7 @@
- 		DF93D7F61444B568007C6459 /* HDHomeRunDirectory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF93D7F51444B568007C6459 /* HDHomeRunDirectory.cpp */; };
- 		DF98D98C1434F47D00A6EBE1 /* SkinVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF98D98A1434F47D00A6EBE1 /* SkinVariable.cpp */; };
- 		DF9A71EE1639C8F6005ECB2E /* HTTPFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9A71EC1639C8F6005ECB2E /* HTTPFile.cpp */; };
-+		DFA8157E16713B1200E4E597 /* WakeOnAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA8157C16713B1200E4E597 /* WakeOnAccess.cpp */; };
- 		DFAB049813F8376700B70BFB /* InertialScrollingHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB049613F8376700B70BFB /* InertialScrollingHandler.cpp */; };
- 		DFB02DEA16629DBA00F37752 /* PyContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB02DE816629DBA00F37752 /* PyContext.cpp */; };
- 		DFB0F472161B747500D744F4 /* AddonsOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0F470161B747500D744F4 /* AddonsOperations.cpp */; };
-@@ -2014,6 +2015,8 @@
- 		DF98D98B1434F47D00A6EBE1 /* SkinVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinVariable.h; sourceTree = "<group>"; };
- 		DF9A71EC1639C8F6005ECB2E /* HTTPFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPFile.cpp; sourceTree = "<group>"; };
- 		DF9A71ED1639C8F6005ECB2E /* HTTPFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPFile.h; sourceTree = "<group>"; };
-+		DFA8157C16713B1200E4E597 /* WakeOnAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WakeOnAccess.cpp; sourceTree = "<group>"; };
-+		DFA8157D16713B1200E4E597 /* WakeOnAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WakeOnAccess.h; sourceTree = "<group>"; };
- 		DFAB049613F8376700B70BFB /* InertialScrollingHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InertialScrollingHandler.cpp; sourceTree = "<group>"; };
- 		DFAB049713F8376700B70BFB /* InertialScrollingHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InertialScrollingHandler.h; sourceTree = "<group>"; };
- 		DFB02DE816629DBA00F37752 /* PyContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PyContext.cpp; path = python/PyContext.cpp; sourceTree = "<group>"; };
-@@ -3999,6 +4002,8 @@
- 				432D7CF512D870D600CE4C49 /* TCPServer.h */,
- 				E38E1E8B0D25F9FD00618676 /* UdpClient.cpp */,
- 				E38E1E8C0D25F9FD00618676 /* UdpClient.h */,
-+				DFA8157C16713B1200E4E597 /* WakeOnAccess.cpp */,
-+				DFA8157D16713B1200E4E597 /* WakeOnAccess.h */,
- 				F5A7A859112908F00059D6AA /* WebServer.cpp */,
- 				F5A7A85A112908F00059D6AA /* WebServer.h */,
- 				E46F7C280F77217400C25D29 /* Zeroconf.cpp */,
-@@ -7734,6 +7739,7 @@
- 				DF64FE4016C07AAA00D028FB /* ViewDatabase.cpp in Sources */,
- 				DF404A3916B9896C00D8023E /* cximage.cpp in Sources */,
- 				DF404A3A16B9896C00D8023E /* imagefactory.cpp in Sources */,
-+				DFA8157E16713B1200E4E597 /* WakeOnAccess.cpp in Sources */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-diff --git a/xbmc/network/linux/NetworkLinux.cpp b/xbmc/network/linux/NetworkLinux.cpp
-index 53d02eb..f1090f0 100644
---- a/xbmc/network/linux/NetworkLinux.cpp
-+++ b/xbmc/network/linux/NetworkLinux.cpp
-@@ -37,6 +37,13 @@
-   #include <sys/sockio.h>
-   #include <net/if.h>
-   #include <net/if_dl.h>
-+#if defined(TARGET_DARWIN_OSX)
-+  #include <net/if_types.h>
-+  #include <net/route.h>
-+  #include <netinet/if_ether.h>
-+#else //IOS
-+  #include "network/osx/ioshacks.h"
-+#endif
-   #include <ifaddrs.h>
- #elif defined(TARGET_FREEBSD)
-   #include <sys/sockio.h>
-@@ -544,6 +551,56 @@ bool CNetworkLinux::PingHost(unsigned long remote_ip, unsigned int timeout_ms)
-   return result == 0;
- }
- 
-+#if defined TARGET_DARWIN
-+bool CNetworkInterfaceLinux::GetHostMacAddress(unsigned long host_ip, CStdString& mac)
-+{
-+  bool ret = false;
-+  size_t needed;
-+  char *buf, *next;
-+  struct rt_msghdr *rtm;
-+  struct sockaddr_inarp *sin;
-+  struct sockaddr_dl *sdl;
-+  int mib[6];
-+  
-+  mac = "";
-+  
-+  mib[0] = CTL_NET;
-+  mib[1] = PF_ROUTE;
-+  mib[2] = 0;
-+  mib[3] = AF_INET;
-+  mib[4] = NET_RT_FLAGS;
-+  mib[5] = RTF_LLINFO;
-+  
-+  if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), NULL, &needed, NULL, 0) == 0)
-+  {   
-+    if (buf = (char*)malloc(needed))
-+    {      
-+      if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), buf, &needed, NULL, 0) == 0)
-+      {        
-+        for (next = buf; next < buf + needed; next += rtm->rtm_msglen) 
-+        {
-+          
-+          rtm = (struct rt_msghdr *)next;
-+          sin = (struct sockaddr_inarp *)(rtm + 1);
-+          sdl = (struct sockaddr_dl *)(sin + 1);
-+          
-+          if (host_ip != sin->sin_addr.s_addr || sdl->sdl_alen < 6)
-+            continue;
-+          
-+          u_char *cp = (u_char*)LLADDR(sdl);
-+          
-+          mac.Format("%02X:%02X:%02X:%02X:%02X:%02X",
-+                     cp[0], cp[1], cp[2], cp[3], cp[4], cp[5]);
-+          ret = true;
-+          break;
-+        }
-+      }
-+      free(buf);
-+    }
-+  }
-+  return ret;
-+}
-+#else
- bool CNetworkInterfaceLinux::GetHostMacAddress(unsigned long host_ip, CStdString& mac)
- {
-   struct arpreq areq;
-@@ -580,6 +637,7 @@ bool CNetworkInterfaceLinux::GetHostMacAddress(unsigned long host_ip, CStdString
- 
-   return false;
- }
-+#endif
- 
- std::vector<NetworkAccessPoint> CNetworkInterfaceLinux::GetAccessPoints(void)
- {
-diff --git a/xbmc/network/osx/ioshacks.h b/xbmc/network/osx/ioshacks.h
-new file mode 100644
-index 0000000..5cc687e
---- /dev/null
-+++ b/xbmc/network/osx/ioshacks.h
-@@ -0,0 +1,70 @@
-+/*
-+ *      Copyright (C) 2005-2012 Team XBMC
-+ *      http://www.xbmc.org
-+ *
-+ *  This Program is free software; you can redistribute it and/or modify
-+ *  it under the terms of the GNU General Public License as published by
-+ *  the Free Software Foundation; either version 2, or (at your option)
-+ *  any later version.
-+ *
-+ *  This Program is distributed in the hope that it will be useful,
-+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ *  GNU General Public License for more details.
-+ *
-+ *  You should have received a copy of the GNU General Public License
-+ *  along with XBMC; see the file COPYING.  If not, see
-+ *  <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+
-+// needed for CNetworkInterfaceLinux::GetHostMacAddress and taken from osx sdk
-+// net/if_types.h net/route.h netinet/if_ether.h
-+
-+/*
-+ * These numbers are used by reliable protocols for determining
-+ * retransmission behavior and are included in the routing structure.
-+ */
-+struct rt_metrics {
-+	u_int32_t	rmx_locks;	/* Kernel must leave these values alone */
-+	u_int32_t	rmx_mtu;	/* MTU for this path */
-+	u_int32_t	rmx_hopcount;	/* max hops expected */
-+	int32_t		rmx_expire;	/* lifetime for route, e.g. redirect */
-+	u_int32_t	rmx_recvpipe;	/* inbound delay-bandwidth product */
-+	u_int32_t	rmx_sendpipe;	/* outbound delay-bandwidth product */
-+	u_int32_t	rmx_ssthresh;	/* outbound gateway buffer limit */
-+	u_int32_t	rmx_rtt;	/* estimated round trip time */
-+	u_int32_t	rmx_rttvar;	/* estimated rtt variance */
-+	u_int32_t	rmx_pksent;	/* packets sent using this route */
-+	u_int32_t	rmx_filler[4];	/* will be used for T/TCP later */
-+};
-+
-+/*
-+ * Structures for routing messages.
-+ */
-+struct rt_msghdr {
-+	u_short	rtm_msglen;		/* to skip over non-understood messages */
-+	u_char	rtm_version;		/* future binary compatibility */
-+	u_char	rtm_type;		/* message type */
-+	u_short	rtm_index;		/* index for associated ifp */
-+	int	rtm_flags;		/* flags, incl. kern & message, e.g. DONE */
-+	int	rtm_addrs;		/* bitmask identifying sockaddrs in msg */
-+	pid_t	rtm_pid;		/* identify sender */
-+	int	rtm_seq;		/* for sender to identify action */
-+	int	rtm_errno;		/* why failed */
-+	int	rtm_use;		/* from rtentry */
-+	u_int32_t rtm_inits;		/* which metrics we are initializing */
-+	struct rt_metrics rtm_rmx;	/* metrics themselves */
-+};
-+struct sockaddr_inarp {
-+	u_char	sin_len;
-+	u_char	sin_family;
-+	u_short sin_port;
-+	struct	in_addr sin_addr;
-+	struct	in_addr sin_srcaddr;
-+	u_short	sin_tos;
-+	u_short	sin_other;
-+#define SIN_PROXY 1
-+};
-+#define RTF_LLINFO	0x400		/* generated by link layer (e.g. ARP) */
-+// --- END
--- 
-1.7.10
-
-
-From 32e476228a56b7ca128c9cb07b2f83f806199eaf Mon Sep 17 00:00:00 2001
-From: "t4.ravenbird" <t4.ravenbird@gmail.com>
-Date: Fri, 8 Feb 2013 21:36:33 +0100
-Subject: [PATCH 3/3] ping by trying to connect non-blocking socket
-
----
- xbmc/network/Network.cpp      |  117 +++++++++++++++++++++++++++++++++++++++++
- xbmc/network/Network.h        |    1 +
- xbmc/network/WakeOnAccess.cpp |   25 ++++++---
- xbmc/network/WakeOnAccess.h   |    3 ++
- 4 files changed, 140 insertions(+), 6 deletions(-)
-
-diff --git a/xbmc/network/Network.cpp b/xbmc/network/Network.cpp
-index 4c6c841..a2b1401 100644
---- a/xbmc/network/Network.cpp
-+++ b/xbmc/network/Network.cpp
-@@ -279,6 +279,123 @@ bool CNetwork::WakeOnLan(const char* mac)
-   return true;
- }
- 
-+// ping helper
-+static const char* ConnectHostPort(SOCKET soc, const struct sockaddr_in& addr, struct timeval& timeOut, bool tryRead)
-+{
-+  // set non-blocking
-+#ifdef _MSC_VER
-+  u_long nonblocking = 1;
-+  int result = ioctlsocket(soc, FIONBIO, &nonblocking);
-+#else
-+  int result = fcntl(soc, F_SETFL, fcntl(soc, F_GETFL) | O_NONBLOCK);
-+#endif
-+
-+  if (result != 0)
-+    return "set non-blocking option failed";
-+
-+  result = connect(soc, (struct sockaddr *)&addr, sizeof(addr)); // non-blocking connect, will fail ..
-+
-+  if (result < 0)
-+  {
-+#ifdef _MSC_VER
-+    if (WSAGetLastError() != WSAEWOULDBLOCK)
-+#else
-+    if (errno != EINPROGRESS)
-+#endif
-+      return "unexpected connect fail";
-+
-+    { // wait for connect to complete
-+      fd_set wset;
-+      FD_ZERO(&wset); 
-+      FD_SET(soc, &wset); 
-+
-+      result = select(FD_SETSIZE, 0, &wset, 0, &timeOut);
-+    }
-+
-+    if (result < 0)
-+      return "select fail";
-+
-+    if (result == 0) // timeout
-+      return ""; // no error
-+
-+    { // verify socket connection state
-+      int err_code = -1;
-+      socklen_t code_len = sizeof (err_code);
-+
-+      result = getsockopt(soc, SOL_SOCKET, SO_ERROR, (char*) &err_code, &code_len);
-+
-+      if (result != 0)
-+        return "getsockopt fail";
-+
-+      if (err_code != 0)
-+        return ""; // no error, just not connected
-+    }
-+  }
-+
-+  if (tryRead)
-+  {
-+    fd_set rset;
-+    FD_ZERO(&rset); 
-+    FD_SET(soc, &rset); 
-+
-+    result = select(FD_SETSIZE, &rset, 0, 0, &timeOut);
-+
-+    if (result > 0)
-+    {
-+      char message [32];
-+
-+      result = recv(soc, message, sizeof(message), 0);
-+    }
-+
-+    if (result == 0)
-+      return ""; // no reply yet
-+
-+    if (result < 0)
-+      return "recv fail";
-+  }
-+
-+  return 0; // success
-+}
-+
-+bool CNetwork::PingHost(unsigned long ipaddr, unsigned short port, unsigned int timeOutMs, bool readability_check)
-+{
-+  if (port == 0) // use icmp ping
-+    return PingHost (ipaddr, timeOutMs);
-+
-+  struct sockaddr_in addr; 
-+  addr.sin_family = AF_INET; 
-+  addr.sin_port = htons(port); 
-+  addr.sin_addr.s_addr = ipaddr; 
-+
-+  SOCKET soc = socket(AF_INET, SOCK_STREAM, 0); 
-+
-+  const char* err_msg = "invalid socket";
-+
-+  if (soc != INVALID_SOCKET)
-+  {
-+    struct timeval tmout; 
-+    tmout.tv_sec = timeOutMs / 1000; 
-+    tmout.tv_usec = (timeOutMs % 1000) * 1000; 
-+
-+    err_msg = ConnectHostPort (soc, addr, tmout, readability_check);
-+
-+    (void) closesocket (soc);
-+  }
-+
-+  if (err_msg && *err_msg)
-+  {
-+#ifdef _MSC_VER
-+    CStdString sock_err = WUSysMsg(WSAGetLastError());
-+#else
-+    CStdString sock_err = strerror(errno);
-+#endif
-+
-+    CLog::Log(LOGERROR, "%s(%s:%d) - %s (%s)", __FUNCTION__, inet_ntoa(addr.sin_addr), port, err_msg, sock_err.c_str());
-+  }
-+
-+  return err_msg == 0;
-+}
-+
- void CNetwork::StartServices()
- {
- #ifdef HAS_WEB_SERVER
-diff --git a/xbmc/network/Network.h b/xbmc/network/Network.h
-index 8d46a6e..25957dc 100644
---- a/xbmc/network/Network.h
-+++ b/xbmc/network/Network.h
-@@ -113,6 +113,7 @@ class CNetwork
-    bool WakeOnLan(const char *mac);
- 
-    // Return true if host replies to ping
-+   bool PingHost(unsigned long host, unsigned short port, unsigned int timeout_ms = 2000, bool readability_check = false);
-    virtual bool PingHost(unsigned long host, unsigned int timeout_ms = 2000) = 0;
- 
-    // Get/set the nameserver(s)
-diff --git a/xbmc/network/WakeOnAccess.cpp b/xbmc/network/WakeOnAccess.cpp
-index d78cd5b..5bc7dae 100644
---- a/xbmc/network/WakeOnAccess.cpp
-+++ b/xbmc/network/WakeOnAccess.cpp
-@@ -71,6 +71,7 @@ static unsigned long HostToIP(const CStdString& host)
-   , wait_online1_sec(DEFAULT_WAIT_FOR_ONLINE_SEC_1)
-   , wait_online2_sec(DEFAULT_WAIT_FOR_ONLINE_SEC_2)
-   , wait_services_sec(DEFAULT_WAIT_FOR_SERVICES_SEC)
-+  , ping_port(0), ping_mode(0)
- {
-   nextWake = CDateTime::GetCurrentDateTime();
- 
-@@ -216,9 +217,9 @@ class NetworkStartWaiter : public WaitCondition
- class PingResponseWaiter : public WaitCondition, private IJobCallback
- {
- public:
--  PingResponseWaiter (const CStdString& host) : m_hostOnline (false)
-+  PingResponseWaiter (const CStdString& host, unsigned short port, unsigned short mode) : m_hostOnline (false)
-   {
--    m_job = new CHostProberJob(host);
-+    m_job = new CHostProberJob(host, port, mode);
-     CSingleLock lock(m_section);
-     m_jobId = CJobManager::GetInstance().AddJob(m_job, this);
-   }
-@@ -244,7 +245,7 @@ class PingResponseWaiter : public WaitCondition, private IJobCallback
-   class CHostProberJob : public CJob
-   {
-     public:
--      CHostProberJob(const CStdString& host) : m_host (host) {}
-+      CHostProberJob(const CStdString& host, unsigned short port, unsigned short mode) : m_host (host), m_port(port), m_mode(mode) {}
- 
-       virtual bool DoWork()
-       {
-@@ -252,7 +253,7 @@ class PingResponseWaiter : public WaitCondition, private IJobCallback
-         {
-           ULONG dst_ip = HostToIP(m_host);
- 
--          if (g_application.getNetwork().PingHost(dst_ip, 2000))
-+          if (g_application.getNetwork().PingHost(dst_ip, m_port, 2000, m_mode & 1))
-             return true;
-         }
-         return false;
-@@ -260,6 +261,8 @@ class PingResponseWaiter : public WaitCondition, private IJobCallback
- 
-     private:
-       CStdString m_host;
-+      unsigned short m_port;
-+      unsigned short m_mode;
-   };
- 
-   bool m_hostOnline;
-@@ -374,7 +377,7 @@ void CWakeOnAccess::WakeUpHost(const WakeUpEntry& server)
-   {
-     ULONG dst_ip = HostToIP(server.host);
- 
--    if (g_application.getNetwork().PingHost(dst_ip, 500)) // quick ping with short timeout to not block too long
-+    if (g_application.getNetwork().PingHost(dst_ip, server.ping_port, 500)) // quick ping with short timeout to not block too long
-     {
-       CLog::Log(LOGNOTICE,"WakeOnAccess success exit, server already running");
-       return;
-@@ -391,7 +394,7 @@ void CWakeOnAccess::WakeUpHost(const WakeUpEntry& server)
-   }
- 
-   {
--    PingResponseWaiter waitObj (server.host); // wait for ping response ..
-+    PingResponseWaiter waitObj (server.host, server.ping_port, server.ping_mode); // wait for ping response ..
- 
-     ProgressDialogHelper::wait_result 
-       result = dlg.ShowAndWait (waitObj, server.wait_online1_sec, LOCALIZED(13030));
-@@ -603,6 +606,12 @@ void CWakeOnAccess::LoadFromXML()
-        CLog::Log(LOGERROR, "%s - Missing <mac> tag or it's empty", __FUNCTION__);
-     else
-     {
-+      if (XMLUtils::GetInt(pWakeUp, "pingport", tmp, 0, USHRT_MAX))
-+        entry.ping_port = (unsigned short) tmp;
-+
-+      if (XMLUtils::GetInt(pWakeUp, "pingmode", tmp, 0, USHRT_MAX))
-+        entry.ping_mode = (unsigned short) tmp;
-+
-       if (XMLUtils::GetInt(pWakeUp, "timeout", tmp, 10, 12 * 60 * 60))
-         entry.timeout.SetDateTimeSpan (0, 0, 0, tmp);
- 
-@@ -618,6 +627,8 @@ void CWakeOnAccess::LoadFromXML()
-       CLog::Log(LOGNOTICE,"  Registering wakeup entry:");
-       CLog::Log(LOGNOTICE,"    HostName        : %s", entry.host.c_str());
-       CLog::Log(LOGNOTICE,"    MacAddress      : %s", entry.mac.c_str());
-+      CLog::Log(LOGNOTICE,"    PingPort        : %d", entry.ping_port);
-+      CLog::Log(LOGNOTICE,"    PingMode        : %d", entry.ping_mode);
-       CLog::Log(LOGNOTICE,"    Timeout         : %d (sec)", GetTotalSeconds(entry.timeout));
-       CLog::Log(LOGNOTICE,"    WaitForOnline   : %d (sec)", entry.wait_online1_sec);
-       CLog::Log(LOGNOTICE,"    WaitForOnlineEx : %d (sec)", entry.wait_online2_sec);
-@@ -648,6 +659,8 @@ void CWakeOnAccess::SaveToXML()
-     {
-       XMLUtils::SetString(pWakeUpNode, "host", i->host);
-       XMLUtils::SetString(pWakeUpNode, "mac", i->mac);
-+      XMLUtils::SetInt(pWakeUpNode, "pingport", i->ping_port);
-+      XMLUtils::SetInt(pWakeUpNode, "pingmode", i->ping_mode);
-       XMLUtils::SetInt(pWakeUpNode, "timeout", GetTotalSeconds(i->timeout));
-       XMLUtils::SetInt(pWakeUpNode, "waitonline", i->wait_online1_sec);
-       XMLUtils::SetInt(pWakeUpNode, "waitonline2", i->wait_online2_sec);
-diff --git a/xbmc/network/WakeOnAccess.h b/xbmc/network/WakeOnAccess.h
-index ee3bd9e..92f3114 100644
---- a/xbmc/network/WakeOnAccess.h
-+++ b/xbmc/network/WakeOnAccess.h
-@@ -76,6 +76,9 @@ class CWakeOnAccess : public IJobCallback
-     unsigned int wait_online2_sec; // extended wait
-     unsigned int wait_services_sec;
- 
-+    unsigned short ping_port; // where to ping
-+    unsigned short ping_mode; // how to ping
-+
-     CDateTime nextWake;
-   };
- 
--- 
-1.7.10
-
