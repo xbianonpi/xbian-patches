@@ -29,7 +29,8 @@ if [ "$1" = "12" ]; then
     remote.xml.patch
     XBianConfluence.patch
     Lircmap.xml.patch
-    ReduceMenuFontSize.patch"
+    ReduceMenuFontSize.patch
+    PowerManager.patch"
 elif [ "$1" = "13" ]; then
     PATCHES="TPNno.patch
     EGLRes.patch
@@ -41,7 +42,8 @@ elif [ "$1" = "13" ]; then
     DualAudioOutput.patch
     remote.xml.patch
     XBianConfluence.patch
-    Lircmap.xml.patch"
+    Lircmap.xml.patch
+    PowerManager.patch"
 fi
 
 for patch in $PATCHES
