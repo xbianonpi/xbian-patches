@@ -29,6 +29,7 @@ if [ "$1" = "12" ]; then
     remote.xml.patch
     XBianConfluence.patch
     Lircmap.xml.patch
+    HandleResolutionChanges.patch
     ReduceMenuFontSize.patch
     PowerManager.patch"
 elif [ "$1" = "13" ]; then
