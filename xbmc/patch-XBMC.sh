@@ -30,6 +30,7 @@ if [ "$1" = "12" ]; then
     XBianConfluence.patch
     Lircmap.xml.patch
     HandleResolutionChanges.patch
+    Wiimote.patch
     ReduceMenuFontSize.patch
     PowerManager.patch"
 elif [ "$1" = "13" ]; then
@@ -38,6 +39,7 @@ elif [ "$1" = "13" ]; then
     XBianSysSum.patch
     NetworkCachingRedux.patch
     RemoveGUISoundSettings.patch
+    Wiimote.patch
     WOL.patch
     Splash.patch
     DualAudioOutput.patch
