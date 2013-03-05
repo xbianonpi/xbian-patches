@@ -22,7 +22,7 @@ if [ "$1" = "12" ]; then
     XBianSysSum.patch
     NetworkCachingRedux.patch
     RemoveGUISoundSettings.patch
-    WOL.patch
+    WOL12.patch
     Splash.patch
     omxcodecs.patch
     DualAudioOutput.patch
@@ -40,7 +40,7 @@ elif [ "$1" = "13" ]; then
     NetworkCachingRedux.patch
     RemoveGUISoundSettings.patch
     Wiimote.patch
-    WOL.patch
+    WOL13.patch
     Splash.patch
     DualAudioOutput.patch
     remote.xml.patch
