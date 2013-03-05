@@ -1669,7 +1669,7 @@ index e92a82d..28b39f9 100644
  
    CSettingsCategory* dbg = AddCategory(SETTINGS_SYSTEM, "debug", 14092);
    AddBool(dbg, "debug.showloginfo", 20191, false);
-diff --git a/xbmc/settings/GUIWindowSettingsCategory.cpp b/xbmc/settings/GUIWindowSettingsCategory.cpp
+diff --git a/xbmc/settings/windows/GUIWindowSettingsCategory.cpp b/xbmc/settings/windows/GUIWindowSettingsCategory.cpp
 index cb94f01..42fe65d 100644
 --- a/xbmc/settings/GUIWindowSettingsCategory.cpp
 +++ b/xbmc/settings/GUIWindowSettingsCategory.cpp
