@@ -32,6 +32,7 @@ if [ "$1" = "12" ]; then
     HandleResolutionChanges.patch
     Wiimote.patch
     ReduceMenuFontSize.patch
+    SeekBeforeZero.patch
     PowerManager.patch"
 elif [ "$1" = "13" ]; then
     PATCHES="TPNno.patch
