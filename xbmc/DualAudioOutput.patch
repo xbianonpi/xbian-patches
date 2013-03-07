@@ -2,6 +2,24 @@ diff --git a/xbmc/cores/omxplayer/OMXAudio.cpp b/xbmc/cores/omxplayer/OMXAudio.c
 index 10c3329..1470685 100644
 --- a/xbmc/cores/omxplayer/OMXAudio.cpp
 +++ b/xbmc/cores/omxplayer/OMXAudio.cpp
+@@ -749,8 +749,16 @@ void COMXAudio::Flush()
+ 
+   m_omx_decoder.FlushInput();
+   m_omx_tunnel_decoder.Flush();
+-  if(!m_Passthrough)
++  if ( m_omx_mixer.IsInitialized() )
++    m_omx_mixer.FlushAll();
++  if( m_omx_tunnel_mixer.IsInitialized() )
+     m_omx_tunnel_mixer.Flush();
++  if ( m_omx_splitter.IsInitialized() )
++    m_omx_splitter.FlushAll();
++  if ( m_omx_tunnel_splitter_analog.IsInitialized() )
++    m_omx_tunnel_splitter_analog.Flush();
++  if ( m_omx_tunnel_splitter_HDMI.IsInitialized() )
++    m_omx_tunnel_splitter_HDMI.Flush();
+   
+   m_last_pts      = DVD_NOPTS_VALUE;
+   m_LostSync      = true;
 @@ -111,8 +111,7 @@ COMXAudio::COMXAudio() :
    m_eEncoding       (OMX_AUDIO_CodingPCM),
    m_extradata       (NULL   ),
