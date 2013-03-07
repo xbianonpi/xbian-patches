@@ -34,6 +34,7 @@ if [ "$1" = "12" ]; then
     ReduceMenuFontSize.patch
     eGalaxTouchScreen.patch
     SeekBeforeZero.patch
+    ToggleDigitalAnalogue.patch
     PowerManager.patch"
 elif [ "$1" = "13" ]; then
     PATCHES="TPNno.patch
