@@ -32,6 +32,7 @@ if [ "$1" = "12" ]; then
     HandleResolutionChanges.patch
     Wiimote.patch
     ReduceMenuFontSize.patch
+    eGalaxTouchScreen.patch
     SeekBeforeZero.patch
     PowerManager.patch"
 elif [ "$1" = "13" ]; then
@@ -46,6 +47,7 @@ elif [ "$1" = "13" ]; then
     DualAudioOutput.patch
     remote.xml.patch
     XBianConfluence.patch
+    eGalaxTouchScreen.patch
     Lircmap.xml.patch
     PowerManager.patch"
 fi
