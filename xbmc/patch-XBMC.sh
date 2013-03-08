@@ -33,6 +33,7 @@ if [ "$1" = "12" ]; then
     Wiimote.patch
     ReduceMenuFontSize.patch
     eGalaxTouchScreen.patch
+    EnableVsync.patch
     SeekBeforeZero.patch
     ToggleDigitalAnalogue.patch
     PowerManager.patch"
