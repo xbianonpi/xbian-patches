@@ -43,8 +43,8 @@ index b48ba35..98f9836 100644
  #define AUDIO_IEC958      1
  #define AUDIO_HDMI        2
 +#define AUDIO_COUNT       3
- #ifdef TARGET_RASPBERRY_PI
- #define AUDIO_BOTH        3
- #endif
+ #define AUDIO_IS_BITSTREAM(x) ((x) == AUDIO_IEC958 || (x) == AUDIO_HDMI)
+ 
+ #define VIDEO_NORMAL 0
 -- 
 1.7.10
