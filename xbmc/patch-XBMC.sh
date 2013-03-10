@@ -25,7 +25,6 @@ if [ "$1" = "12" ]; then
     WOL12.patch
     Splash.patch
     omxcodecs.patch
-    DualAudioOutput.patch
     remote.xml.patch
     XBianConfluence.patch
     Lircmap.xml.patch
@@ -36,6 +35,7 @@ if [ "$1" = "12" ]; then
     EnableVsync.patch
     SeekBeforeZero.patch
     ToggleDigitalAnalogue.patch
+    DualAudioOutput.patch
     PowerManager.patch"
 elif [ "$1" = "13" ]; then
     PATCHES="TPNno.patch
