@@ -41,7 +41,6 @@ elif [ "$1" = "13" ]; then
     PATCHES="TPNno.patch
     EGLRes.patch
     XBianSysSum.patch
-    NetworkCachingRedux.patch
     RemoveGUISoundSettings.patch
     Wiimote.patch
     WOL13.patch
