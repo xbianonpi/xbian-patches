@@ -28,13 +28,9 @@ if [ "$1" = "12" ]; then
     remote.xml.patch
     XBianConfluence.patch
     Lircmap.xml.patch
-    HandleResolutionChanges.patch
     Wiimote.patch
     ReduceMenuFontSize.patch
     eGalaxTouchScreen.patch
-    EnableVsync.patch
-    SeekBeforeZero.patch
-    ToggleDigitalAnalogue.patch
     DualAudioOutput.patch
     PowerManager.patch"
 elif [ "$1" = "13" ]; then
