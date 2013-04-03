@@ -27,6 +27,7 @@ if [ "$1" = "12" ]; then
     omxcodecs.patch
     remote.xml.patch
     SyncDVDPlayerChanges.patch
+    SetMediaTimeGPUAfterSeek.patch
     XBianConfluence.patch
     Lircmap.xml.patch
     Wiimote.patch
