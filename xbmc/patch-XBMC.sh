@@ -26,6 +26,7 @@ if [ "$1" = "12" ]; then
     Splash.patch
     omxcodecs.patch
     remote.xml.patch
+    SyncDVDPlayerChanges.patch
     XBianConfluence.patch
     Lircmap.xml.patch
     Wiimote.patch
