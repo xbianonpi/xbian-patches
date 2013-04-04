@@ -1,41 +1,158 @@
-From fe4e14ede10904900b917f8486217a51c01cb0bc Mon Sep 17 00:00:00 2001
+From 8c3ad259cc26059d51ac49df82d58e25a806a4dc Mon Sep 17 00:00:00 2001
 From: "t4.ravenbird" <t4.ravenbird@gmail.com>
-Date: Mon, 25 Feb 2013 08:57:50 +0100
+Date: Thu, 4 Apr 2013 12:03:01 +0200
 Subject: [PATCH] wake on access
 
 ---
- language/English/strings.po                 |   46 +-
- project/VS2010Express/XBMC.vcxproj.filters  |    6 +
- xbmc/Application.cpp                        |   28 +-
- xbmc/Application.h                          |    1 +
- xbmc/dbwrappers/mysqldataset.cpp            |    3 +
- xbmc/filesystem/DirectoryFactory.cpp        |    2 +
- xbmc/filesystem/FileFactory.cpp             |    3 +
- xbmc/main/main.cpp                          |    7 -
- xbmc/network/Makefile.in                    |    1 +
- xbmc/network/Network.cpp                    |  117 +++++
- xbmc/network/Network.h                      |    6 +
- xbmc/network/WakeOnAccess.cpp               |  679 +++++++++++++++++++++++++++
- xbmc/network/WakeOnAccess.h                 |   80 ++++
- xbmc/network/linux/NetworkLinux.cpp         |  119 +++++
- xbmc/network/linux/NetworkLinux.h           |    5 +
- xbmc/network/osx/ioshacks.h                 |   70 +++
- xbmc/network/windows/NetworkWin32.cpp       |   54 +++
- xbmc/network/windows/NetworkWin32.h         |    5 +
- xbmc/settings/GUISettings.cpp               |    1 +
- xbmc/settings/GUIWindowSettingsCategory.cpp |    7 +
- xbmc/settings/Settings.cpp                  |    6 +
- 25 files changed, 1251 insertions(+), 15 deletions(-)
+ XBMC-ATV2.xcodeproj/project.pbxproj                |   6 +
+ XBMC-IOS.xcodeproj/project.pbxproj                 |   6 +
+ XBMC.xcodeproj/project.pbxproj                     |   6 +
+ language/English/strings.po                        |  46 +-
+ project/VS2010Express/XBMC.vcxproj                 |   2 +
+ project/VS2010Express/XBMC.vcxproj.filters         |   6 +
+ xbmc/Application.cpp                               |  30 +-
+ xbmc/Application.h                                 |   1 +
+ xbmc/dbwrappers/mysqldataset.cpp                   |   3 +
+ xbmc/filesystem/DirectoryFactory.cpp               |   2 +
+ xbmc/filesystem/FileFactory.cpp                    |   3 +
+ xbmc/main/main.cpp                                 |   7 -
+ xbmc/network/Makefile.in                           |   1 +
+ xbmc/network/Network.cpp                           | 117 ++++
+ xbmc/network/Network.h                             |   6 +
+ xbmc/network/WakeOnAccess.cpp                      | 685 +++++++++++++++++++++
+ xbmc/network/WakeOnAccess.h                        |  77 +++
+ xbmc/network/linux/NetworkLinux.cpp                | 119 ++++
+ xbmc/network/linux/NetworkLinux.h                  |   5 +
+ xbmc/network/osx/ioshacks.h                        |  70 +++
+ xbmc/network/windows/NetworkWin32.cpp              |  54 ++
+ xbmc/network/windows/NetworkWin32.h                |   5 +
+ xbmc/settings/GUISettings.cpp                      |   1 +
+ xbmc/settings/MediaSourceSettings.cpp              |   3 +
+ .../settings/windows/GUIWindowSettingsCategory.cpp |   7 +
+ 25 files changed, 1253 insertions(+), 15 deletions(-)
  create mode 100644 xbmc/network/WakeOnAccess.cpp
  create mode 100644 xbmc/network/WakeOnAccess.h
  create mode 100644 xbmc/network/osx/ioshacks.h
 
-
+diff --git a/XBMC-ATV2.xcodeproj/project.pbxproj b/XBMC-ATV2.xcodeproj/project.pbxproj
+index 5e15527..0dfa8d9 100644
+--- a/XBMC-ATV2.xcodeproj/project.pbxproj
++++ b/XBMC-ATV2.xcodeproj/project.pbxproj
+@@ -174,6 +174,7 @@
+  	DFA0F9551618E1CD00611CBB /* DVDOverlayCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA0F9541618E1CD00611CBB /* DVDOverlayCodec.cpp */; };
+ 		DFA6BE8713FED2A10048CC11 /* AirPlayServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA6BE8513FED2A10048CC11 /* AirPlayServer.cpp */; };
+ 		DFA6BE8A13FED2B40048CC11 /* HttpParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA6BE8813FED2B40048CC11 /* HttpParser.cpp */; };
++		DFA815A216713BC400E4E597 /* WakeOnAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA815A016713BC400E4E597 /* WakeOnAccess.cpp */; };
+ 		DFAB04C113F8385F00B70BFB /* InertialScrollingHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB04BF13F8385F00B70BFB /* InertialScrollingHandler.cpp */; };
+ 		DFAB4C0F15FCCB4300E1BAF6 /* TagLibVFSStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB4C0B15FCCB4300E1BAF6 /* TagLibVFSStream.cpp */; };
+ 		DFAB4C1015FCCB4300E1BAF6 /* TagLoaderTagLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB4C0D15FCCB4300E1BAF6 /* TagLoaderTagLib.cpp */; };
+@@ -1424,6 +1425,8 @@
+ 		DFA6BE8613FED2A10048CC11 /* AirPlayServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirPlayServer.h; sourceTree = "<group>"; };
+ 		DFA6BE8813FED2B40048CC11 /* HttpParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HttpParser.cpp; sourceTree = "<group>"; };
+ 		DFA6BE8913FED2B40048CC11 /* HttpParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpParser.h; sourceTree = "<group>"; };
++		DFA815A016713BC400E4E597 /* WakeOnAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WakeOnAccess.cpp; sourceTree = "<group>"; };
++		DFA815A116713BC400E4E597 /* WakeOnAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WakeOnAccess.h; sourceTree = "<group>"; };
+ 		DFAB04BF13F8385F00B70BFB /* InertialScrollingHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InertialScrollingHandler.cpp; sourceTree = "<group>"; };
+ 		DFAB04C013F8385F00B70BFB /* InertialScrollingHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InertialScrollingHandler.h; sourceTree = "<group>"; };
+ 		DFAB4C0B15FCCB4300E1BAF6 /* TagLibVFSStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagLibVFSStream.cpp; sourceTree = "<group>"; };
+@@ -5508,6 +5511,8 @@
+ 				F56C7668131EC153000AD0F6 /* TCPServer.h */,
+ 				F56C766B131EC153000AD0F6 /* UdpClient.cpp */,
+ 				F56C766C131EC153000AD0F6 /* UdpClient.h */,
++				DFA815A016713BC400E4E597 /* WakeOnAccess.cpp */,
++				DFA815A116713BC400E4E597 /* WakeOnAccess.h */,
+ 				F56C766D131EC153000AD0F6 /* WebServer.cpp */,
+ 				F56C766E131EC153000AD0F6 /* WebServer.h */,
+ 				F56C766F131EC153000AD0F6 /* Zeroconf.cpp */,
+@@ -7697,6 +7702,7 @@
+ 				DF8990051709B95B00B35C21 /* MediaSourceSettings.cpp in Sources */,
+ 				DF8990061709B95B00B35C21 /* SkinSettings.cpp in Sources */,
+ 				DF8990091709B97800B35C21 /* ViewStateSettings.cpp in Sources */,
++				DFA815A216713BC400E4E597 /* WakeOnAccess.cpp in Sources */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+diff --git a/XBMC-IOS.xcodeproj/project.pbxproj b/XBMC-IOS.xcodeproj/project.pbxproj
+index 79c8fe0..1df6298 100644
+--- a/XBMC-IOS.xcodeproj/project.pbxproj
++++ b/XBMC-IOS.xcodeproj/project.pbxproj
+@@ -180,6 +180,7 @@
+ 		DFA0F9291618E18A00611CBB /* DVDOverlayCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA0F9281618E18A00611CBB /* DVDOverlayCodec.cpp */; };
+ 		DFA6BE4313FECA010048CC11 /* AirPlayServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA6BE4113FECA010048CC11 /* AirPlayServer.cpp */; };
+ 		DFA6BE7713FED09C0048CC11 /* HttpParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA6BE7513FED09C0048CC11 /* HttpParser.cpp */; };
++		DFA8158E16713BA100E4E597 /* WakeOnAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA8158C16713BA100E4E597 /* WakeOnAccess.cpp */; };
+ 		DFAB04B013F8383300B70BFB /* InertialScrollingHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB04AE13F8383300B70BFB /* InertialScrollingHandler.cpp */; };
+ 		DFAB4BE615FCCA5000E1BAF6 /* TagLibVFSStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB4BE215FCCA5000E1BAF6 /* TagLibVFSStream.cpp */; };
+ 		DFAB4BE715FCCA5000E1BAF6 /* TagLoaderTagLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB4BE415FCCA5000E1BAF6 /* TagLoaderTagLib.cpp */; };
+@@ -1445,6 +1446,8 @@
+ 		DFA6BE4213FECA010048CC11 /* AirPlayServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirPlayServer.h; sourceTree = "<group>"; };
+ 		DFA6BE7513FED09C0048CC11 /* HttpParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HttpParser.cpp; sourceTree = "<group>"; };
+ 		DFA6BE7613FED09C0048CC11 /* HttpParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpParser.h; sourceTree = "<group>"; };
++		DFA8158C16713BA100E4E597 /* WakeOnAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WakeOnAccess.cpp; sourceTree = "<group>"; };
++		DFA8158D16713BA100E4E597 /* WakeOnAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WakeOnAccess.h; sourceTree = "<group>"; };
+ 		DFAB04AE13F8383300B70BFB /* InertialScrollingHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InertialScrollingHandler.cpp; sourceTree = "<group>"; };
+ 		DFAB04AF13F8383300B70BFB /* InertialScrollingHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InertialScrollingHandler.h; sourceTree = "<group>"; };
+ 		DFAB4BE215FCCA5000E1BAF6 /* TagLibVFSStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagLibVFSStream.cpp; sourceTree = "<group>"; };
+@@ -5910,6 +5913,8 @@
+ 				F56C864B131F42EB000AD0F6 /* TCPServer.h */,
+ 				F56C864E131F42EB000AD0F6 /* UdpClient.cpp */,
+ 				F56C864F131F42EB000AD0F6 /* UdpClient.h */,
++				DFA8158C16713BA100E4E597 /* WakeOnAccess.cpp */,
++				DFA8158D16713BA100E4E597 /* WakeOnAccess.h */,
+ 				F56C8650131F42EB000AD0F6 /* WebServer.cpp */,
+ 				F56C8651131F42EB000AD0F6 /* WebServer.h */,
+ 				F56C8652131F42EB000AD0F6 /* Zeroconf.cpp */,
+@@ -7768,6 +7773,7 @@
+ 				DF898FC31709B8E600B35C21 /* MediaSourceSettings.cpp in Sources */,
+ 				DF898FC41709B8E600B35C21 /* SkinSettings.cpp in Sources */,
+ 				DF898FC71709B90400B35C21 /* ViewStateSettings.cpp in Sources */,
++				DFA8158E16713BA100E4E597 /* WakeOnAccess.cpp in Sources */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+diff --git a/XBMC.xcodeproj/project.pbxproj b/XBMC.xcodeproj/project.pbxproj
+index cf937da..54a22c3 100644
+--- a/XBMC.xcodeproj/project.pbxproj
++++ b/XBMC.xcodeproj/project.pbxproj
+@@ -439,6 +439,7 @@
+ 		DF93D7F61444B568007C6459 /* HDHomeRunDirectory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF93D7F51444B568007C6459 /* HDHomeRunDirectory.cpp */; };
+ 		DF98D98C1434F47D00A6EBE1 /* SkinVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF98D98A1434F47D00A6EBE1 /* SkinVariable.cpp */; };
+ 		DF9A71EE1639C8F6005ECB2E /* HTTPFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9A71EC1639C8F6005ECB2E /* HTTPFile.cpp */; };
++		DFA8157E16713B1200E4E597 /* WakeOnAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFA8157C16713B1200E4E597 /* WakeOnAccess.cpp */; };
+ 		DFAB049813F8376700B70BFB /* InertialScrollingHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAB049613F8376700B70BFB /* InertialScrollingHandler.cpp */; };
+ 		DFAF6A4F16EBAE3800D6AE12 /* RssManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAF6A4D16EBAE3800D6AE12 /* RssManager.cpp */; };
+ 		DFB02DEA16629DBA00F37752 /* PyContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB02DE816629DBA00F37752 /* PyContext.cpp */; };
+@@ -2006,6 +2007,8 @@
+ 		DF98D98B1434F47D00A6EBE1 /* SkinVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinVariable.h; sourceTree = "<group>"; };
+ 		DF9A71EC1639C8F6005ECB2E /* HTTPFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPFile.cpp; sourceTree = "<group>"; };
+ 		DF9A71ED1639C8F6005ECB2E /* HTTPFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPFile.h; sourceTree = "<group>"; };
++		DFA8157C16713B1200E4E597 /* WakeOnAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WakeOnAccess.cpp; sourceTree = "<group>"; };
++		DFA8157D16713B1200E4E597 /* WakeOnAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WakeOnAccess.h; sourceTree = "<group>"; };
+ 		DFAB049613F8376700B70BFB /* InertialScrollingHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InertialScrollingHandler.cpp; sourceTree = "<group>"; };
+ 		DFAB049713F8376700B70BFB /* InertialScrollingHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InertialScrollingHandler.h; sourceTree = "<group>"; };
+ 		DFAF6A4C16EBAE3800D6AE12 /* IRssObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRssObserver.h; sourceTree = "<group>"; };
+@@ -4008,6 +4011,8 @@
+ 				432D7CF512D870D600CE4C49 /* TCPServer.h */,
+ 				E38E1E8B0D25F9FD00618676 /* UdpClient.cpp */,
+ 				E38E1E8C0D25F9FD00618676 /* UdpClient.h */,
++				DFA8157C16713B1200E4E597 /* WakeOnAccess.cpp */,
++				DFA8157D16713B1200E4E597 /* WakeOnAccess.h */,
+ 				F5A7A859112908F00059D6AA /* WebServer.cpp */,
+ 				F5A7A85A112908F00059D6AA /* WebServer.h */,
+ 				E46F7C280F77217400C25D29 /* Zeroconf.cpp */,
+@@ -7768,6 +7773,7 @@
+ 				DF89901D1709BB2D00B35C21 /* MediaSourceSettings.cpp in Sources */,
+ 				DF89901E1709BB2D00B35C21 /* SkinSettings.cpp in Sources */,
+ 				DF8990211709BB5400B35C21 /* ViewStateSettings.cpp in Sources */,
++				DFA8157E16713B1200E4E597 /* WakeOnAccess.cpp in Sources */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
 diff --git a/language/English/strings.po b/language/English/strings.po
-index 5b79b46..a2d287b 100644
+index 7017ead..a2206f6 100644
 --- a/language/English/strings.po
 +++ b/language/English/strings.po
-@@ -4478,7 +4478,51 @@ msgctxt "#13025"
+@@ -4482,7 +4482,51 @@ msgctxt "#13025"
  msgid "Joystick unplugged"
  msgstr ""
  
@@ -88,12 +205,71 @@ index 5b79b46..a2d287b 100644
  
  msgctxt "#13050"
  msgid "Running low on battery"
-
+diff --git a/project/VS2010Express/XBMC.vcxproj b/project/VS2010Express/XBMC.vcxproj
+index 0493f5b..f1bed2d 100644
+--- a/project/VS2010Express/XBMC.vcxproj
++++ b/project/VS2010Express/XBMC.vcxproj
+@@ -842,6 +842,7 @@
+     <ClCompile Include="..\..\xbmc\network\upnp\UPnPRenderer.cpp" />
+     <ClCompile Include="..\..\xbmc\network\upnp\UPnPServer.cpp" />
+     <ClCompile Include="..\..\xbmc\network\upnp\UPnPSettings.cpp" />
++    <ClCompile Include="..\..\xbmc\network\WakeOnAccess.cpp" />
+     <ClCompile Include="..\..\xbmc\network\WebServer.cpp" />
+     <ClCompile Include="..\..\xbmc\network\websocket\WebSocket.cpp" />
+     <ClCompile Include="..\..\xbmc\network\websocket\WebSocketManager.cpp" />
+@@ -1125,6 +1126,7 @@
+     <ClInclude Include="..\..\xbmc\network\upnp\UPnPPlayer.h" />
+     <ClInclude Include="..\..\xbmc\network\upnp\UPnPRenderer.h" />
+     <ClInclude Include="..\..\xbmc\network\upnp\UPnPServer.h" />
++    <ClInclude Include="..\..\xbmc\network\WakeOnAccess.h" />
+     <ClInclude Include="..\..\xbmc\network\websocket\WebSocket.h" />
+     <ClInclude Include="..\..\xbmc\network\websocket\WebSocketManager.h" />
+     <ClInclude Include="..\..\xbmc\network\websocket\WebSocketV13.h" />
+diff --git a/project/VS2010Express/XBMC.vcxproj.filters b/project/VS2010Express/XBMC.vcxproj.filters
+index e66cf60..6382551 100644
+--- a/project/VS2010Express/XBMC.vcxproj.filters
++++ b/project/VS2010Express/XBMC.vcxproj.filters
+@@ -1348,6 +1348,9 @@
+     <ClCompile Include="..\..\xbmc\network\UdpClient.cpp">
+       <Filter>network</Filter>
+     </ClCompile>
++    <ClCompile Include="..\..\xbmc\network\WakeOnAccess.cpp">
++      <Filter>network</Filter>
++    </ClCompile>
+     <ClCompile Include="..\..\xbmc\network\WebServer.cpp">
+       <Filter>network</Filter>
+     </ClCompile>
+@@ -4249,6 +4252,9 @@
+     <ClInclude Include="..\..\xbmc\network\UdpClient.h">
+       <Filter>network</Filter>
+     </ClInclude>
++    <ClInclude Include="..\..\xbmc\network\WakeOnAccess.h">
++      <Filter>network</Filter>
++    </ClInclude>
+     <ClInclude Include="..\..\xbmc\network\WebServer.h">
+       <Filter>network</Filter>
+     </ClInclude>
 diff --git a/xbmc/Application.cpp b/xbmc/Application.cpp
-index 4afcf60..b8acf45 100644
+index c3358ca..8627e5d 100644
 --- a/xbmc/Application.cpp
 +++ b/xbmc/Application.cpp
-@@ -5058,17 +5058,23 @@ void CApplication::Process()
+@@ -143,6 +143,7 @@
+ #endif
+ #include "network/Zeroconf.h"
+ #include "network/ZeroconfBrowser.h"
++#include "network/WakeOnAccess.h"
+ #ifndef _LINUX
+ #include "threads/platform/win/Win32Exception.h"
+ #endif
+@@ -719,6 +720,7 @@ bool CApplication::Create()
+ #ifdef HAS_UPNP
+   g_settings.RegisterSettingsHandler(&CUPnPSettings::Get());
+ #endif
++  g_settings.RegisterSettingsHandler(&CWakeOnAccess::Get());
+   
+   g_settings.RegisterSubSettings(&CMediaSettings::Get());
+   g_settings.RegisterSubSettings(&CSkinSettings::Get());
+@@ -5088,17 +5090,23 @@ void CApplication::Process()
    // dispatch the messages generated by python or other threads to the current window
    g_windowManager.DispatchThreadMessages();
  
@@ -124,7 +300,7 @@ index 4afcf60..b8acf45 100644
    if (g_application.m_bStop) return; //we're done, everything has been unloaded
  
    // check how far we are through playing the current item
-@@ -5089,6 +5095,14 @@ void CApplication::Process()
+@@ -5119,6 +5127,14 @@ void CApplication::Process()
    g_cpuInfo.getUsedPercentage(); // must call it to recalculate pct values
  }
  
@@ -140,10 +316,10 @@ index 4afcf60..b8acf45 100644
  void CApplication::ProcessSlow()
  {
 diff --git a/xbmc/Application.h b/xbmc/Application.h
-index 3195c49..35dc562 100644
+index ef31d06..caacd6f 100644
 --- a/xbmc/Application.h
 +++ b/xbmc/Application.h
-@@ -208,6 +208,7 @@ class CApplication : public CXBApplicationEx, public IPlayerCallback, public IMs
+@@ -210,6 +210,7 @@ class CApplication : public CXBApplicationEx, public IPlayerCallback, public IMs
  
    virtual void Process();
    void ProcessSlow();
@@ -173,10 +349,10 @@ index d4cd153..07f3875 100644
      if (mysql_real_connect(conn, host.c_str(),login.c_str(),passwd.c_str(), NULL, atoi(port.c_str()),NULL,0) != NULL)
      {
 diff --git a/xbmc/filesystem/DirectoryFactory.cpp b/xbmc/filesystem/DirectoryFactory.cpp
-index 0f5c393..3a2db9c 100644
+index 73c3c3e..df35e16 100644
 --- a/xbmc/filesystem/DirectoryFactory.cpp
 +++ b/xbmc/filesystem/DirectoryFactory.cpp
-@@ -44,6 +44,7 @@
+@@ -43,6 +43,7 @@
  #include "Application.h"
  #include "addons/Addon.h"
  #include "utils/log.h"
@@ -184,7 +360,7 @@ index 0f5c393..3a2db9c 100644
  
  #ifdef HAS_FILESYSTEM_SMB
  #ifdef _WIN32
-@@ -124,6 +125,7 @@
+@@ -123,6 +124,7 @@
  IDirectory* CDirectoryFactory::Create(const CStdString& strPath)
  {
    CURL url(strPath);
@@ -193,10 +369,10 @@ index 0f5c393..3a2db9c 100644
    CFileItem item(strPath, false);
    IFileDirectory* pDir=CFileDirectoryFactory::Create(strPath, &item);
 diff --git a/xbmc/filesystem/FileFactory.cpp b/xbmc/filesystem/FileFactory.cpp
-index 1483e31..466d3d3 100644
+index 40f4180..40331a8 100644
 --- a/xbmc/filesystem/FileFactory.cpp
 +++ b/xbmc/filesystem/FileFactory.cpp
-@@ -96,6 +96,7 @@
+@@ -95,6 +95,7 @@
  #include "Application.h"
  #include "URL.h"
  #include "utils/log.h"
@@ -204,7 +380,7 @@ index 1483e31..466d3d3 100644
  
  using namespace XFILE;
  
-@@ -115,6 +116,8 @@ IFile* CFileFactory::CreateLoader(const CStdString& strFileName)
+@@ -114,6 +115,8 @@ IFile* CFileFactory::CreateLoader(const CStdString& strFileName)
  
  IFile* CFileFactory::CreateLoader(const CURL& url)
  {
@@ -214,7 +390,7 @@ index 1483e31..466d3d3 100644
    strProtocol.MakeLower();
  
 diff --git a/xbmc/main/main.cpp b/xbmc/main/main.cpp
-index 4ee13c3..319bc0e 100644
+index 349adea..ed5256b 100644
 --- a/xbmc/main/main.cpp
 +++ b/xbmc/main/main.cpp
 @@ -66,13 +66,6 @@ int main(int argc, char* argv[])
@@ -244,10 +420,10 @@ index e2ffb0b..4e680fc 100644
  SRCS += ZeroconfBrowser.cpp
  SRCS += Zeroconf.cpp
 diff --git a/xbmc/network/Network.cpp b/xbmc/network/Network.cpp
-index 976056a..4ee4fc0 100644
+index 02dabe3..49ce7c4 100644
 --- a/xbmc/network/Network.cpp
 +++ b/xbmc/network/Network.cpp
-@@ -279,6 +279,123 @@ bool CNetwork::WakeOnLan(const char* mac)
+@@ -277,6 +277,123 @@ bool CNetwork::WakeOnLan(const char* mac)
    return true;
  }
  
@@ -397,10 +573,10 @@ index 3f2bdf3..69411f8 100644
     virtual void SetNameServers(std::vector<CStdString> nameServers) = 0;
 diff --git a/xbmc/network/WakeOnAccess.cpp b/xbmc/network/WakeOnAccess.cpp
 new file mode 100644
-index 0000000..b9ac0e5
+index 0000000..1fc611e
 --- /dev/null
 +++ b/xbmc/network/WakeOnAccess.cpp
-@@ -0,0 +1,679 @@
+@@ -0,0 +1,685 @@
 +/*
 + *      Copyright (C) 2005-2013 Team XBMC
 + *      http://www.xbmc.org
@@ -438,7 +614,7 @@ index 0000000..b9ac0e5
 +#include "guilib/LocalizeStrings.h"
 +#include "settings/AdvancedSettings.h"
 +#include "settings/GUISettings.h"
-+#include "settings/Settings.h"
++#include "settings/MediaSourceSettings.h"
 +#include "utils/JobManager.h"
 +#include "utils/log.h"
 +#include "utils/XMLUtils.h"
@@ -850,7 +1026,7 @@ index 0000000..b9ac0e5
 +    CJobManager::GetInstance().AddJob(new CMACDiscoveryJob(host), this);
 +}
 +
-+void CWakeOnAccess::AddHostsFromShare(const CMediaSource& source, std::vector<std::string>& hosts)
++static void AddHostsFromMediaSource(const CMediaSource& source, std::vector<std::string>& hosts)
 +{
 +  for (CStdStringArray::const_iterator it = source.vecPaths.begin() ; it != source.vecPaths.end(); it++)
 +  {
@@ -860,18 +1036,16 @@ index 0000000..b9ac0e5
 +  }
 +}
 +
-+void CWakeOnAccess::AddHostsFromShares(const VECSOURCES& sources, vector<string>& hosts)
++static void AddHostsFromVecSource(const VECSOURCES& sources, vector<string>& hosts)
 +{
 +  for (VECSOURCES::const_iterator it = sources.begin(); it != sources.end(); it++)
-+    AddHostsFromShare(*it, hosts);
++    AddHostsFromMediaSource(*it, hosts);
 +}
 +
-+void CWakeOnAccess::QueueMACDiscoveryForShare(const CMediaSource& source)
++static void AddHostsFromVecSource(const VECSOURCES* sources, vector<string>& hosts)
 +{
-+  vector<string> hosts;
-+  AddHostsFromShare(source, hosts);
-+  for (vector<string>::const_iterator it = hosts.begin(); it != hosts.end(); it++)
-+    QueueMACDiscoveryForHost(*it);
++  if (sources)
++    AddHostsFromVecSource(*sources, hosts);
 +}
 +
 +void CWakeOnAccess::QueueMACDiscoveryForAllRemotes()
@@ -879,10 +1053,13 @@ index 0000000..b9ac0e5
 +  vector<string> hosts;
 +
 +  // add media sources
-+  AddHostsFromShares(g_settings.m_videoSources, hosts);
-+  AddHostsFromShares(g_settings.m_musicSources, hosts);
-+  AddHostsFromShares(g_settings.m_pictureSources, hosts);
-+  AddHostsFromShares(g_settings.m_fileSources, hosts);
++  CMediaSourceSettings& ms = CMediaSourceSettings::Get();
++
++  AddHostsFromVecSource(ms.GetSources("video"), hosts);
++  AddHostsFromVecSource(ms.GetSources("music"), hosts);
++  AddHostsFromVecSource(ms.GetSources("files"), hosts);
++  AddHostsFromVecSource(ms.GetSources("pictures"), hosts);
++  AddHostsFromVecSource(ms.GetSources("programs"), hosts);
 +
 +  // add mysql servers
 +  AddHostFromDatabase(g_advancedSettings.m_databaseVideo, hosts);
@@ -965,6 +1142,11 @@ index 0000000..b9ac0e5
 +CStdString CWakeOnAccess::GetSettingFile()
 +{
 +  return CSpecialProtocol::TranslatePath("special://masterprofile/wakeonlan.xml");
++}
++
++void CWakeOnAccess::OnSettingsLoaded()
++{
++  LoadFromXML();
 +}
 +
 +void CWakeOnAccess::LoadFromXML()
@@ -1082,10 +1264,10 @@ index 0000000..b9ac0e5
 +}
 diff --git a/xbmc/network/WakeOnAccess.h b/xbmc/network/WakeOnAccess.h
 new file mode 100644
-index 0000000..2a1d853
+index 0000000..2a1e1db
 --- /dev/null
 +++ b/xbmc/network/WakeOnAccess.h
-@@ -0,0 +1,80 @@
+@@ -0,0 +1,77 @@
 +/*
 + *      Copyright (C) 2005-2013 Team XBMC
 + *      http://www.xbmc.org
@@ -1108,11 +1290,11 @@ index 0000000..2a1d853
 + */
 +
 +#include "URL.h"
-+#include "MediaSource.h"
 +#include "XBDateTime.h"
 +#include "utils/Job.h"
++#include "settings/ISettingsHandler.h"
 +
-+class CWakeOnAccess : public IJobCallback
++class CWakeOnAccess : private IJobCallback, public ISettingsHandler
 +{
 +public:
 +  CWakeOnAccess();
@@ -1124,13 +1306,10 @@ index 0000000..2a1d853
 +  void SetEnabled(bool enabled) { m_enabled = enabled; }
 +  bool IsEnabled() const { return m_enabled; }
 +
-+  void QueueMACDiscoveryForHost(const CStdString& host);
-+  void QueueMACDiscoveryForShare(const CMediaSource& source);
 +  void QueueMACDiscoveryForAllRemotes();
 +
 +  virtual void OnJobComplete(unsigned int jobID, bool success, CJob *job);
-+
-+  void LoadFromXML();
++  virtual void OnSettingsLoaded();
 +
 +  // struct to keep per host settings
 +  struct WakeUpEntry
@@ -1151,11 +1330,11 @@ index 0000000..2a1d853
 +  };
 +
 +private:
-+  void AddHostsFromShare(const CMediaSource& source, std::vector<std::string>& hosts);
-+  void AddHostsFromShares(const VECSOURCES& sources, std::vector<std::string>& hosts);
-+
 +  CStdString GetSettingFile();
++  void LoadFromXML();
 +  void SaveToXML();
++
++  void QueueMACDiscoveryForHost(const CStdString& host);
 +
 +  typedef std::vector<WakeUpEntry> EntriesVector;
 +  EntriesVector m_entries;
@@ -1167,7 +1346,7 @@ index 0000000..2a1d853
 +  void WakeUpHost(const WakeUpEntry& server);
 +};
 diff --git a/xbmc/network/linux/NetworkLinux.cpp b/xbmc/network/linux/NetworkLinux.cpp
-index dc7ce84..108ce20 100644
+index 0130957..8908052 100644
 --- a/xbmc/network/linux/NetworkLinux.cpp
 +++ b/xbmc/network/linux/NetworkLinux.cpp
 @@ -37,6 +37,13 @@
@@ -1498,10 +1677,10 @@ index d163d8f..fd75508 100644
     virtual std::vector<CStdString> GetNameServers(void);
     virtual void SetNameServers(std::vector<CStdString> nameServers);
 diff --git a/xbmc/settings/GUISettings.cpp b/xbmc/settings/GUISettings.cpp
-index e92a82d..28b39f9 100644
+index a5a33e6..ef14cb6 100644
 --- a/xbmc/settings/GUISettings.cpp
 +++ b/xbmc/settings/GUISettings.cpp
-@@ -617,6 +617,7 @@ void CGUISettings::Initialize()
+@@ -634,6 +634,7 @@ void CGUISettings::Initialize()
  #endif
      AddInt(pwm, "powermanagement.shutdownstate", 13008, POWERSTATE_QUIT, shutdown, SPIN_CONTROL_TEXT);
    }
@@ -1509,11 +1688,32 @@ index e92a82d..28b39f9 100644
  
    CSettingsCategory* dbg = AddCategory(SETTINGS_SYSTEM, "debug", 14092);
    AddBool(dbg, "debug.showloginfo", 20191, false);
+diff --git a/xbmc/settings/MediaSourceSettings.cpp b/xbmc/settings/MediaSourceSettings.cpp
+index 60c679f..574715a 100644
+--- a/xbmc/settings/MediaSourceSettings.cpp
++++ b/xbmc/settings/MediaSourceSettings.cpp
+@@ -28,6 +28,7 @@
+ #include "utils/URIUtils.h"
+ #include "utils/XBMCTinyXML.h"
+ #include "utils/XMLUtils.h"
++#include "network/WakeOnAccess.h"
+ 
+ #define SOURCES_FILE  "sources.xml"
+ #define XML_SOURCES   "sources"
+@@ -132,6 +133,8 @@ bool CMediaSourceSettings::Save(const std::string &file) const
+   SetSources(pRoot, "pictures", m_pictureSources, m_defaultPictureSource);
+   SetSources(pRoot, "files", m_fileSources, m_defaultFileSource);
+ 
++  CWakeOnAccess::Get().QueueMACDiscoveryForAllRemotes();
++
+   return doc.SaveFile(file);
+ }
+ 
 diff --git a/xbmc/settings/windows/GUIWindowSettingsCategory.cpp b/xbmc/settings/windows/GUIWindowSettingsCategory.cpp
-index cb94f01..42fe65d 100644
+index 4a94ecc..f08032c 100644
 --- a/xbmc/settings/windows/GUIWindowSettingsCategory.cpp
 +++ b/xbmc/settings/windows/GUIWindowSettingsCategory.cpp
-@@ -79,6 +79,7 @@
+@@ -78,6 +78,7 @@
  #include "filesystem/SpecialProtocol.h"
  
  #include "network/Zeroconf.h"
@@ -1521,7 +1721,7 @@ index cb94f01..42fe65d 100644
  #include "peripherals/Peripherals.h"
  #include "peripherals/dialogs/GUIDialogPeripheralManager.h"
  #include "peripherals/devices/PeripheralImon.h"
-@@ -1990,6 +1991,12 @@ void CGUIWindowSettingsCategory::OnSettingChanged(BaseSettingControlPtr pSetting
+@@ -1953,6 +1954,12 @@ void CGUIWindowSettingsCategory::OnSettingChanged(BaseSettingControlPtr pSetting
        }
      }
    }
@@ -1534,43 +1734,5 @@ index cb94f01..42fe65d 100644
  
    UpdateSettings();
  }
-diff --git a/xbmc/settings/Settings.cpp b/xbmc/settings/Settings.cpp
-index 3db721a..45fbe30 100644
---- a/xbmc/settings/Settings.cpp
-+++ b/xbmc/settings/Settings.cpp
-@@ -51,6 +51,7 @@
- #include "cores/playercorefactory/PlayerCoreFactory.h"
- #include "utils/FileUtils.h"
- #include "utils/URIUtils.h"
-+#include "network/WakeOnAccess.h"
- #include "input/MouseStat.h"
- #include "filesystem/File.h"
- #include "filesystem/DirectoryCache.h"
-@@ -179,6 +180,7 @@ bool CSettings::Load()
-   LoadSources();
-   LoadRSSFeeds();
-   LoadUserFolderLayout();
-+  CWakeOnAccess::Get().LoadFromXML();
- 
-   return true;
- }
-@@ -1226,6 +1228,8 @@ bool CSettings::UpdateShare(const CStdString &type, const CStdString oldName, co
-   if (!pShare)
-     return false;
- 
-+  CWakeOnAccess::Get().QueueMACDiscoveryForShare(*pShare);
-+
-   // Update our XML file as well
-   return SaveSources();
- }
-@@ -1317,6 +1321,8 @@ bool CSettings::AddShare(const CStdString &type, const CMediaSource &share)
-   }
-   pShares->push_back(shareToAdd);
- 
-+  CWakeOnAccess::Get().QueueMACDiscoveryForShare(shareToAdd);
-+
-   if (!share.m_ignore)
-   {
-     return SaveSources();
 -- 
-1.7.10
+1.8.1.5
