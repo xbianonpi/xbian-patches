@@ -2,10 +2,10 @@ diff --git a/xbmc/cores/omxplayer/OMXAudio.cpp b/xbmc/cores/omxplayer/OMXAudio.c
 index 10c3329..1470685 100644
 --- a/xbmc/cores/omxplayer/OMXAudio.cpp
 +++ b/xbmc/cores/omxplayer/OMXAudio.cpp
-@@ -111,8 +111,7 @@
-   m_eEncoding       (OMX_AUDIO_CodingPCM),
+@@ -113,8 +113,7 @@
    m_extradata       (NULL   ),
    m_extrasize       (0      ),
+   m_vizBufferSamples(0      ),
 -  m_last_pts        (DVD_NOPTS_VALUE),
 -  m_omx_render      (NULL   )
 +  m_last_pts        (DVD_NOPTS_VALUE)
@@ -72,7 +72,7 @@ index 10c3329..1470685 100644
 +    OMX_INIT_STRUCTURE(audioDest);
 +    strncpy((char *)audioDest.sName, device.c_str(), strlen(device.c_str()));
  
--  omx_err = m_omx_render->SetConfig(OMX_IndexConfigBrcmAudioDestination, &audioDest);
+-  OMX_ERRORTYPE omx_err = m_omx_render->SetConfig(OMX_IndexConfigBrcmAudioDestination, &audioDest);
 -  if (omx_err != OMX_ErrorNone)
 -    return false;
 +    omx_err = m_omx_render_analog.SetConfig(OMX_IndexConfigBrcmAudioDestination, &audioDest);
