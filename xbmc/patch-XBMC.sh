@@ -29,6 +29,7 @@ if [ "$1" = "12" ]; then
     RemoveGUISoundSettings.patch
     WOL.patch
     Splash.patch
+    Airplay.patch
     XBianConfluence.patch
     Wiimote.patch
     ReduceMenuFontSize.patch
