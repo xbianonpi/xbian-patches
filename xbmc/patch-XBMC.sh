@@ -15,6 +15,10 @@
 #You should have received a copy of the GNU General Public License along 
 #with XBian. If not, see <http://www.gnu.org/licenses/>
 #
+
+# Patches that are currently not working (need an upgrade)
+# XBMC13: DualAudioOutput.patch
+
 PATCHES=""
 if [ "$1" = "12" ]; then
     PATCHES="TPNno.patch      
@@ -30,7 +34,6 @@ if [ "$1" = "12" ]; then
     Wiimote.patch
     ReduceMenuFontSize.patch
     eGalaxTouchScreen.patch
-    DualAudioOutput.patch
     omxplayer.patch
     PowerManager.patch"
 elif [ "$1" = "13" ]; then
@@ -41,7 +44,6 @@ elif [ "$1" = "13" ]; then
     Wiimote.patch
     WOL13.patch
     Splash.patch
-    DualAudioOutput.patch
     remote.xml.patch
     XBianConfluence.patch
     eGalaxTouchScreen.patch
