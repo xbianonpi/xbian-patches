@@ -21,7 +21,8 @@
 
 PATCHES=""
 if [ "$1" = "12" ]; then
-    PATCHES="TPNno.patch      
+    PATCHES="TPNno.patch  
+    cores.patch
     EGLRes.patch
     XBianSysSum.patch
     NetworkCachingRedux.patch
@@ -32,7 +33,6 @@ if [ "$1" = "12" ]; then
     Wiimote.patch
     ReduceMenuFontSize.patch
     eGalaxTouchScreen.patch
-    omxplayer.patch
     DualAudioOutput.patch
     PowerManager.patch"
 elif [ "$1" = "13" ]; then
