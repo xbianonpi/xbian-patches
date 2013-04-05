@@ -30,7 +30,6 @@ if [ "$1" = "12" ]; then
     Splash.patch
     remote.xml.patch
     XBianConfluence.patch
-    Lircmap.xml.patch
     Wiimote.patch
     ReduceMenuFontSize.patch
     eGalaxTouchScreen.patch
@@ -46,7 +45,6 @@ elif [ "$1" = "13" ]; then
     Splash.patch
     remote.xml.patch
     XBianConfluence.patch
-    Lircmap.xml.patch
     PowerManager.patch"
 fi
 
@@ -59,3 +57,6 @@ done
 
 wget https://raw.github.com/xbianonpi/xbian/master/usr/local/share/xbmc/media/Splash.png
 mv Splash.png media/
+
+wget https://raw.github.com/xbianonpi/xbian-patches/master/xbmc/Lircmap.xml
+mv Lircmap.xml system
