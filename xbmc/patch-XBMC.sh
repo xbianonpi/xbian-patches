@@ -22,7 +22,7 @@
 PATCHES=""
 if [ "$1" = "12" ]; then
     PATCHES="TPNno.patch  
-    cores.patch
+    core.patch
     EGLRes.patch
     XBianSysSum.patch
     NetworkCachingRedux.patch
