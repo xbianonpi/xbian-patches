@@ -17,7 +17,7 @@
 #
 
 # Patches that are currently not working (need an upgrade)
-# XBMC13: DualAudioOutput.patch
+# XBMC13: DualAudioOutput.patch, eGalaxTouchScreen.patch
 
 PATCHES=""
 if [ "$1" = "12" ]; then
@@ -46,7 +46,6 @@ elif [ "$1" = "13" ]; then
     Splash.patch
     remote.xml.patch
     XBianConfluence.patch
-    eGalaxTouchScreen.patch
     Lircmap.xml.patch
     PowerManager.patch"
 fi
