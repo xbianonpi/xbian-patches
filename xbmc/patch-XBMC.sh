@@ -24,7 +24,7 @@ if [ "$1" = "12" ]; then
     PATCHES="TPNno.patch      
     EGLRes.patch
     XBianSysSum.patch
-    NetworkCachingRedux.patch
+    NetworkCachingRedux12.patch
     RemoveGUISoundSettings.patch
     WOL12.patch
     Splash.patch
