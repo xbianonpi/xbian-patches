@@ -17,7 +17,7 @@
 #
 
 # Patches that are currently not working (need an upgrade)
-# XBMC13: eGalaxTouchScreen.patch
+# XBMC13: eGalaxTouchScreen.patch, NetworkCachingRedux.patch
 
 PATCHES=""
 if [ "$1" = "12" ]; then
@@ -39,7 +39,6 @@ if [ "$1" = "12" ]; then
 elif [ "$1" = "13" ]; then
     PATCHES="TPNno.patch
     EGLRes.patch
-    NetworkCachingRedux.patch
     XBianSysSum.patch
     RemoveGUISoundSettings.patch
     Wiimote.patch
