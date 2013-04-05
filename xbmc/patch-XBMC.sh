@@ -24,17 +24,14 @@ if [ "$1" = "12" ]; then
     RemoveGUISoundSettings.patch
     WOL12.patch
     Splash.patch
-    omxcodecs.patch
     remote.xml.patch
-    SetMediaTimeGPUAfterSeek.patch
     XBianConfluence.patch
     Lircmap.xml.patch
     Wiimote.patch
     ReduceMenuFontSize.patch
     eGalaxTouchScreen.patch
     DualAudioOutput.patch
-    VariousImprovements.patch
-    RemoveUnnecessaryNULLPointerChecks.patch
+    omxplayer.patch
     PowerManager.patch"
 elif [ "$1" = "13" ]; then
     PATCHES="TPNno.patch
