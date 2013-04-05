@@ -24,7 +24,7 @@ if [ "$1" = "12" ]; then
     PATCHES="TPNno.patch      
     EGLRes.patch
     XBianSysSum.patch
-    NetworkCachingRedux12.patch
+    NetworkCachingRedux.patch
     RemoveGUISoundSettings.patch
     WOL12.patch
     Splash.patch
@@ -38,7 +38,7 @@ if [ "$1" = "12" ]; then
 elif [ "$1" = "13" ]; then
     PATCHES="TPNno.patch
     EGLRes.patch
-    NetworkCachingRedux13.patch
+    NetworkCachingRedux.patch
     XBianSysSum.patch
     RemoveGUISoundSettings.patch
     Wiimote.patch
