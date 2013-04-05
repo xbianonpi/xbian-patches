@@ -28,7 +28,6 @@ if [ "$1" = "12" ]; then
     RemoveGUISoundSettings.patch
     WOL12.patch
     Splash.patch
-    remote.xml.patch
     XBianConfluence.patch
     Wiimote.patch
     ReduceMenuFontSize.patch
@@ -43,7 +42,6 @@ elif [ "$1" = "13" ]; then
     Wiimote.patch
     WOL13.patch
     Splash.patch
-    remote.xml.patch
     XBianConfluence.patch
     PowerManager.patch"
 fi
@@ -60,3 +58,8 @@ mv Splash.png media/
 
 wget https://raw.github.com/xbianonpi/xbian-patches/master/xbmc/Lircmap.xml
 mv Lircmap.xml system
+
+wget https://raw.github.com/xbianonpi/xbian-patches/master/xbmc/remote.xml
+mv remote.xml system/keymaps
+
+
