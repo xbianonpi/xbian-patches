@@ -1,3 +1,27 @@
+diff --git a/xbmc/cores/omxplayer/OMXImage.cpp b/xbmc/cores/omxplayer/OMXImage.cpp
+index 13f0822..b144942 100644
+--- a/xbmc/cores/omxplayer/OMXImage.cpp
++++ b/xbmc/cores/omxplayer/OMXImage.cpp
+@@ -33,6 +33,7 @@
+ 
+ #include <sys/time.h>
+ #include <inttypes.h>
++#include "settings/DisplaySettings.h"
+ #include "settings/GUISettings.h"
+ #include "settings/Settings.h"
+ #include "settings/AdvancedSettings.h"
+diff --git a/xbmc/cores/omxplayer/OMXPlayerVideo.cpp b/xbmc/cores/omxplayer/OMXPlayerVideo.cpp
+index 3816000..ae2da00 100644
+--- a/xbmc/cores/omxplayer/OMXPlayerVideo.cpp
++++ b/xbmc/cores/omxplayer/OMXPlayerVideo.cpp
+@@ -40,6 +40,7 @@
+ #include "DVDCodecs/DVDCodecUtils.h"
+ #include "windowing/WindowingFactory.h"
+ #include "DVDOverlayRenderer.h"
++#include "settings/DisplaySettings.h"
+ #include "settings/GUISettings.h"
+ #include "settings/Settings.h"
+ #include "settings/MediaSettings.h"
 diff -ENwbur xbmcfrodo/xbmc/cores/AudioEngine/AEAudioFormat.h xbmc/xbmc/cores/AudioEngine/AEAudioFormat.h
 --- xbmcfrodo/xbmc/cores/AudioEngine/AEAudioFormat.h	2013-04-05 17:19:12.269433079 +0000
 +++ xbmc/xbmc/cores/AudioEngine/AEAudioFormat.h	2013-03-08 08:56:41.614490175 +0000
