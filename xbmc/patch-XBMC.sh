@@ -17,7 +17,7 @@
 #
 
 # Patches that are currently not working (need an upgrade)
-# XBMC13: eGalaxTouchScreen.patch, NetworkCachingRedux.patch
+# XBMC13: eGalaxTouchScreen.patch
 
 PATCHES=""
 if [ "$1" = "12" ]; then
