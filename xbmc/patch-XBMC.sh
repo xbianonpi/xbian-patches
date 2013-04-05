@@ -34,6 +34,7 @@ if [ "$1" = "12" ]; then
     eGalaxTouchScreen.patch
     DualAudioOutput.patch
     VariousImprovements.patch
+    RemoveUnnecessaryNULLPointerChecks.patch
     PowerManager.patch"
 elif [ "$1" = "13" ]; then
     PATCHES="TPNno.patch
