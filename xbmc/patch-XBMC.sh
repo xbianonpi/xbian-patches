@@ -46,6 +46,7 @@ elif [ "$1" = "13" ]; then
     WOL.patch
     DualAudioOutput.patch
     Splash.patch
+    Hotplug.patch
     XBianConfluence.patch
     PowerManager.patch"
 fi
