@@ -16,7 +16,7 @@
 #with XBian. If not, see <http://www.gnu.org/licenses/>
 #
 
-# Patches that are currently not working (need an upgrade) : eGalaxTouchScreen.patch, NetworkCachingRedux.patch
+# Patches that are currently not working (need an upgrade) : eGalaxTouchScreen.patch
 
 PATCHES="TPNno.patch
         DualAudioOutput.patch
@@ -26,6 +26,7 @@ PATCHES="TPNno.patch
         Wiimote.patch
         WOL.patch
         Splash.patch
+        NetworkCachingRedux.patch
         XBianConfluence.patch
         PowerManager.patch"
 
