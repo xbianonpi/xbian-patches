@@ -1858,28 +1858,3 @@
 +#endif
 +
 +#endif /* _KCOMPAT_H */
---- a/drivers/media/dvb/dvb-usb/Kconfig
-+++ b/drivers/media/dvb/dvb-usb/Kconfig
-@@ -398,13 +398,20 @@
- 	help
- 	  Say Y here to support the Technisat USB2 DVB-S/S2 device
- 
--config DVB_USB_IT913X
--	tristate "it913x driver"
-+config DVB_USB_IT913XV1
-+	tristate "it913xv1 driver"
- 	depends on DVB_USB
- 	select DVB_IT913X_FE
- 	help
- 	  Say Y here to support the it913x device
- 
-+config DVB_USB_IT913XV2
-+        tristate "it913xv2 driver"
-+        depends on DVB_USB
-+        select DVB_IT913X_FE
-+        help
-+          Say Y here to support the it913x device
-+
- config DVB_USB_MXL111SF
- 	tristate "MxL111SF DTV USB2.0 support"
- 	depends on DVB_USB
