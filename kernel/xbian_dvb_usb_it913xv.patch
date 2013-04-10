@@ -1,29 +1,33 @@
---- a/drivers/media/usb/dvb-usb/Kconfig
-+++ b/drivers/media/usb/dvb-usb/Kconfig
-@@ -311,3 +311,17 @@
- 	select DVB_STV6110x if MEDIA_SUBDRV_AUTOSELECT
+--- a/drivers/media/dvb/dvb-usb/Kconfig
++++ b/drivers/media/dvb/dvb-usb/Kconfig
+@@ -398,13 +398,20 @@
  	help
  	  Say Y here to support the Technisat USB2 DVB-S/S2 device
-+      
+ 
+-config DVB_USB_IT913X
+-	tristate "it913x driver"
 +config DVB_USB_IT913XV1
-+    tristate "it913xv1 driver"
-+ 	depends on DVB_USB
-+ 	select DVB_IT913X_FE
-+ 	help
-+ 	  Say Y here to support the it913x device
-+
++	tristate "it913xv1 driver"
+ 	depends on DVB_USB
+ 	select DVB_IT913X_FE
+ 	help
+ 	  Say Y here to support the it913x device
+ 
 +config DVB_USB_IT913XV2
-+    tristate "it913xv2 driver"
-+    depends on DVB_USB
-+    select DVB_IT913X_FE
-+    help
-+      Say Y here to support the it913x device
-\ No newline at end of file
---- a/drivers/media/usb/dvb-usb/Makefile
-+++ b/drivers/media/usb/dvb-usb/Makefile
-@@ -28,6 +28,12 @@
- dvb-usb-nova-t-usb2-objs := nova-t-usb2.o
- obj-$(CONFIG_DVB_USB_NOVA_T_USB2) += dvb-usb-dibusb-common.o dvb-usb-nova-t-usb2.o
++        tristate "it913xv2 driver"
++        depends on DVB_USB
++        select DVB_IT913X_FE
++        help
++          Say Y here to support the it913x device
++
+ config DVB_USB_MXL111SF
+ 	tristate "MxL111SF DTV USB2.0 support"
+ 	depends on DVB_USB
+--- a/drivers/media/dvb/dvb-usb/Makefile
++++ b/drivers/media/dvb/dvb-usb/Makefile
+@@ -102,6 +102,12 @@
+ dvb-usb-it913x-objs := it913x.o
+ obj-$(CONFIG_DVB_USB_IT913X) += dvb-usb-it913x.o
  
 +dvb-usb-it913xv1-objs := it913xv1.o
 +obj-$(CONFIG_DVB_USB_IT913XV1) += dvb-usb-it913xv1.o
@@ -31,11 +35,11 @@
 +dvb-usb-it913xv2-objs := it913xv2.o
 +obj-$(CONFIG_DVB_USB_IT913XV2) += dvb-usb-it913xv2.o
 +
- dvb-usb-umt-010-objs := umt-010.o
- obj-$(CONFIG_DVB_USB_UMT_010) += dvb-usb-dibusb-common.o dvb-usb-umt-010.o
- 
+ dvb-usb-mxl111sf-objs = mxl111sf.o mxl111sf-phy.o mxl111sf-i2c.o mxl111sf-gpio.o
+ obj-$(CONFIG_DVB_USB_MXL111SF) += dvb-usb-mxl111sf.o
+ obj-$(CONFIG_DVB_USB_MXL111SF) += mxl111sf-demod.o
 --- /dev/null
-+++ drivers/media/usb/dvb-usb/it913xv1.c
++++ drivers/media/dvb/dvb-usb/it913xv1.c
 @@ -0,0 +1,931 @@
 +/* DVB USB compliant linux driver for IT9137
 + *
@@ -969,7 +973,7 @@
 +MODULE_VERSION("1.28");
 +MODULE_LICENSE("GPL");
 --- /dev/null
-+++ drivers/media/usb/dvb-usb/it913xv2.c
++++ drivers/media/dvb/dvb-usb/it913xv2.c
 @@ -0,0 +1,931 @@
 +/* DVB USB compliant linux driver for IT9137
 + *
@@ -1902,4 +1906,43 @@
 +MODULE_DESCRIPTION("it913x USB 2 Driver");
 +MODULE_VERSION("1.28");
 +MODULE_LICENSE("GPL");
-\ No newline at end of file
+--- a/drivers/media/dvb/dvb-usb/Makefile
++++ b/drivers/media/dvb/dvb-usb/Makefile
+@@ -102,12 +102,6 @@
+ dvb-usb-it913x-objs := it913x.o
+ obj-$(CONFIG_DVB_USB_IT913X) += dvb-usb-it913x.o
+ 
++dvb-usb-it913xv1-objs := it913xv1.o
++obj-$(CONFIG_DVB_USB_IT913XV1) += dvb-usb-it913xv1.o
++
++dvb-usb-it913xv2-objs := it913xv2.o
++obj-$(CONFIG_DVB_USB_IT913XV2) += dvb-usb-it913xv2.o
++
+ dvb-usb-mxl111sf-objs = mxl111sf.o mxl111sf-phy.o mxl111sf-i2c.o mxl111sf-gpio.o
+ obj-$(CONFIG_DVB_USB_MXL111SF) += dvb-usb-mxl111sf.o
+ obj-$(CONFIG_DVB_USB_MXL111SF) += mxl111sf-demod.o
+--- a/drivers/media/dvb/dvb-usb/Kconfig
++++ b/drivers/media/dvb/dvb-usb/Kconfig
+@@ -398,20 +398,13 @@
+ 	help
+ 	  Say Y here to support the Technisat USB2 DVB-S/S2 device
+ 
++config DVB_USB_IT913XV1
++	tristate "it913xv1 driver"
+-config DVB_USB_IT913X
+-	tristate "it913x driver"
+ 	depends on DVB_USB
+ 	select DVB_IT913X_FE
+ 	help
+ 	  Say Y here to support the it913x device
+ 
++config DVB_USB_IT913XV2
++        tristate "it913xv2 driver"
++        depends on DVB_USB
++        select DVB_IT913X_FE
++        help
++          Say Y here to support the it913x device
++
+ config DVB_USB_MXL111SF
+ 	tristate "MxL111SF DTV USB2.0 support"
+ 	depends on DVB_USB
