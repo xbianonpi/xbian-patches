@@ -21,7 +21,7 @@
 PATCHES=""
 if [ "$1" = "12" ]; then
 PATCHES="TPNno.patch
-        DualAudioOutput.patch
+        DualAudioOutput12.patch
         NetworkCachingRedux.patch
         eGalaxTouchScreen.patch
         EGLRes.patch
@@ -35,7 +35,7 @@ PATCHES="TPNno.patch
         PowerManager.patch"
 elif [ "$1" = "13" ]; then
 PATCHES="TPNno.patch
-        DualAudioOutput.patch
+        DualAudioOutput13.patch
         EGLRes.patch
         XBianSysSum.patch
         RemoveGUISoundSettings.patch
