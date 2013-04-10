@@ -683,12 +683,12 @@ diff --git a/xbmc/settings/GUISettings.h b/xbmc/settings/GUISettings.h
 index d97be67..365354d 100644
 --- a/xbmc/settings/GUISettings.h
 +++ b/xbmc/settings/GUISettings.h
-@@ -84,6 +84,9 @@ class TiXmlElement;
- #define AUDIO_ANALOG      0
+@@ -85,6 +85,9 @@
  #define AUDIO_IEC958      1
  #define AUDIO_HDMI        2
+ #define AUDIO_COUNT       3
 +#ifdef TARGET_RASPBERRY_PI
-+#define AUDIO_BOTH        3
++#define AUDIO_BOTH 	   3
 +#endif
  #define AUDIO_IS_BITSTREAM(x) ((x) == AUDIO_IEC958 || (x) == AUDIO_HDMI)
  
