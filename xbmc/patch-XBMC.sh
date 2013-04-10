@@ -28,7 +28,7 @@ PATCHES="TPNno.patch
         XBianSysSum.patch
         RemoveGUISoundSettings.patch
         Wiimote.patch
-        WOL.patch
+        WOL12.patch
         Splash.patch
         XBianConfluence.patch
         Hotplug.patch
@@ -40,7 +40,7 @@ PATCHES="TPNno.patch
         XBianSysSum.patch
         RemoveGUISoundSettings.patch
         Wiimote.patch
-        WOL.patch
+        WOL13.patch
         Splash.patch
         XBianConfluence.patch
         PowerManager.patch"
