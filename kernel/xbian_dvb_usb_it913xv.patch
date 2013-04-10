@@ -1902,3 +1902,4 @@
 +MODULE_DESCRIPTION("it913x USB 2 Driver");
 +MODULE_VERSION("1.28");
 +MODULE_LICENSE("GPL");
+\ No newline at end of file
