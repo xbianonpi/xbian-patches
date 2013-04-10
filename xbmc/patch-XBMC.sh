@@ -31,6 +31,7 @@ PATCHES="TPNno.patch
         WOL.patch
         Splash.patch
         XBianConfluence.patch
+        Hotplug.patch
         PowerManager.patch"
 elif [ "$1" = "13" ]; then
 PATCHES="TPNno.patch
