@@ -15,9 +15,24 @@
 #You should have received a copy of the GNU General Public License along 
 #with XBian. If not, see <http://www.gnu.org/licenses/>
 #
+# Patches that are currently not working (need an upgrade) :
+# XBMC13: eGalaxTouchScreen.patch, NetworkCachingRedux.patch
 
-# Patches that are currently not working (need an upgrade) : eGalaxTouchScreen.patch, NetworkCachingRedux.patch
-
+PATCHES=""
+if [ "$1" = "12" ]; then
+PATCHES="TPNno.patch
+        DualAudioOutput.patch
+        NetworkCachingRedux.patch
+        eGalaxTouchScreen.patch
+        EGLRes.patch
+        XBianSysSum.patch
+        RemoveGUISoundSettings.patch
+        Wiimote.patch
+        WOL.patch
+        Splash.patch
+        XBianConfluence.patch
+        PowerManager.patch"
+elif [ "$1" = "13" ]; then
 PATCHES="TPNno.patch
         DualAudioOutput.patch
         EGLRes.patch
@@ -28,6 +43,7 @@ PATCHES="TPNno.patch
         Splash.patch
         XBianConfluence.patch
         PowerManager.patch"
+fi
 
 for patch in $PATCHES
 do
