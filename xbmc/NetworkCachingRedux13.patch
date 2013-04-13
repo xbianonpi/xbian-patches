@@ -1,0 +1,234 @@
+From 13df3f8511436a6f34a119c49b8a39391ca9eab2 Mon Sep 17 00:00:00 2001
+From: mtisza <mtisza@gmail.com>
+Date: Thu, 11 Apr 2013 19:05:28 -0400
+Subject: [PATCH] PR 1388, PR 831 Inclusions (credit goes to bobo1on1,
+ classicspam)
+
+---
+ .../DVDInputStreams/DVDInputStreamFile.cpp         |  9 +++++++-
+ xbmc/cores/dvdplayer/DVDPlayer.cpp                 | 26 ++++++++++++++++++++--
+ xbmc/cores/dvdplayer/DVDPlayer.h                   |  3 ++-
+ xbmc/filesystem/FileCache.cpp                      | 23 ++++++++++++++++---
+ xbmc/filesystem/MemBufferCache.cpp                 |  6 ++---
+ xbmc/settings/AdvancedSettings.cpp                 |  6 +++--
+ xbmc/settings/AdvancedSettings.h                   |  3 ++-
+ 7 files changed, 63 insertions(+), 13 deletions(-)
+
+diff --git a/xbmc/cores/dvdplayer/DVDInputStreams/DVDInputStreamFile.cpp b/xbmc/cores/dvdplayer/DVDInputStreams/DVDInputStreamFile.cpp
+index 6662686..550c8a5 100644
+--- a/xbmc/cores/dvdplayer/DVDInputStreams/DVDInputStreamFile.cpp
++++ b/xbmc/cores/dvdplayer/DVDInputStreams/DVDInputStreamFile.cpp
+@@ -23,6 +23,7 @@
+ #include "filesystem/IFile.h"
+ #include "utils/log.h"
+ #include "utils/URIUtils.h"
++#include "settings/AdvancedSettings.h"  
+ 
+ using namespace XFILE;
+ 
+@@ -51,8 +52,13 @@ bool CDVDInputStreamFile::Open(const char* strFile, const std::string& content)
+   if (!m_pFile)
+     return false;
+ 
++  unsigned int flags = READ_TRUNCATED | READ_BITRATE | READ_CHUNKED;
++
++  if (!URIUtils::IsOnDVD(strFile) && !URIUtils::IsBluray(strFile) && g_advancedSettings.m_alwaysForceBuffer)
++    flags |= READ_CACHED;
++
+   // open file in binary mode
+-  if (!m_pFile->Open(strFile, READ_TRUNCATED | READ_BITRATE | READ_CHUNKED))
++  if (!m_pFile->Open(strFile, flags))
+   {
+     delete m_pFile;
+     m_pFile = NULL;
+@@ -144,6 +150,7 @@ int CDVDInputStreamFile::GetBlockSize()
+ void CDVDInputStreamFile::SetReadRate(unsigned rate)
+ {
+   unsigned maxrate = rate + 1024 * 1024 / 8;
++  CLog::Log(LOGDEBUG, "CDVDInputStreamFile::SetReadRate - Read rate set to %u bytes per second", maxrate);
+   if(m_pFile->IoControl(IOCTRL_CACHE_SETRATE, &maxrate) >= 0)
+     CLog::Log(LOGDEBUG, "CDVDInputStreamFile::SetReadRate - set cache throttle rate to %u bytes per second", maxrate);
+ }
+diff --git a/xbmc/cores/dvdplayer/DVDPlayer.cpp b/xbmc/cores/dvdplayer/DVDPlayer.cpp
+index 95eb8ae..1f79221 100644
+--- a/xbmc/cores/dvdplayer/DVDPlayer.cpp
++++ b/xbmc/cores/dvdplayer/DVDPlayer.cpp
+@@ -432,6 +432,7 @@ void CSelectionStreams::Update(CDVDInputStream* input, CDVDDemux* demuxer)
+   m_caching = CACHESTATE_DONE;
+   m_HasVideo = false;
+   m_HasAudio = false;
++  m_readrate = 0;
+ 
+   memset(&m_SpeedState, 0, sizeof(m_SpeedState));
+ 
+@@ -696,7 +697,11 @@ bool CDVDPlayer::OpenDemuxStream()
+   int64_t len = m_pInputStream->GetLength();
+   int64_t tim = m_pDemuxer->GetStreamLength();
+   if(len > 0 && tim > 0)
+-    m_pInputStream->SetReadRate(len * 1000 / tim);
++  {	
++    //cap to intital read rate to 40 megabits/second if less than average bitrate * 1.25
++    m_readrate = std::min((unsigned int)((len * 1000 / tim) * 1.25), (unsigned int) (40000000 / 8));
++    m_pInputStream->SetReadRate(m_readrate);
++  }
+ 
+   return true;
+ }
+@@ -1106,7 +1111,10 @@ void CDVDPlayer::Process()
+ 
+     // update application with our state
+     UpdateApplication(1000);
+-
++	
++    //update readrate based on peak bitrate
++    UpdateReadRate();	
++    
+     if (CheckDelayedChannelEntry())
+       continue;
+ 
+@@ -4049,6 +4057,20 @@ void CDVDPlayer::UpdateApplication(double timeout)
+   m_UpdateApplication = CDVDClock::GetAbsoluteClock();
+ }
+ 
++void CDVDPlayer::UpdateReadRate()
++{
++  unsigned int bytespersecond = (m_dvdPlayerVideo.GetVideoBitrate() + m_dvdPlayerAudio.GetAudioBitrate()) / 8;
++
++  if (bytespersecond > m_readrate)
++  {  
++    //if current bitrate * 1.25 is over 40 Mbs then cap at at max of actual bitrate or 40 Mb/s whichever is greater
++    //otherwise set read rate to current bitrate * 1.25
++    m_readrate = std::min((unsigned int)(bytespersecond * 1.25), std::max((unsigned int) bytespersecond, (unsigned int) (40000000 / 8)));
++
++    m_pInputStream->SetReadRate(m_readrate);
++  }
++}
++
+ bool CDVDPlayer::CanRecord()
+ {
+   CSingleLock lock(m_StateSection);
+diff --git a/xbmc/cores/dvdplayer/DVDPlayer.h b/xbmc/cores/dvdplayer/DVDPlayer.h
+index fa6c99f..61fa460 100644
+--- a/xbmc/cores/dvdplayer/DVDPlayer.h
++++ b/xbmc/cores/dvdplayer/DVDPlayer.h
+@@ -332,6 +332,7 @@ class CDVDPlayer : public IPlayer, public CThread, public IDVDPlayer
+ 
+   void UpdateApplication(double timeout);
+   void UpdatePlayState(double timeout);
++  void UpdateReadRate();
+   double m_UpdateApplication;
+ 
+   bool m_bAbortRequest;
+@@ -341,7 +342,7 @@ class CDVDPlayer : public IPlayer, public CThread, public IDVDPlayer
+   ECacheState  m_caching;
+   CFileItem    m_item;
+   unsigned int m_iChannelEntryTimeOut;
+-
++  unsigned int m_readrate;
+ 
+   CCurrentStream m_CurrentAudio;
+   CCurrentStream m_CurrentVideo;
+diff --git a/xbmc/filesystem/FileCache.cpp b/xbmc/filesystem/FileCache.cpp
+index 39241ef..ef6ce74 100644
+--- a/xbmc/filesystem/FileCache.cpp
++++ b/xbmc/filesystem/FileCache.cpp
+@@ -18,6 +18,7 @@
+  *
+  */
+ 
++#include <limits.h>
+ #include "threads/SystemClock.h"
+ #include "utils/AutoPtrHandle.h"
+ #include "FileCache.h"
+@@ -85,11 +86,27 @@ class CWriteRate
+    m_seekPos = 0;
+    m_readPos = 0;
+    m_writePos = 0;
+-   if (g_advancedSettings.m_cacheMemBufferSize == 0)
++   if (g_advancedSettings.m_freeMemCachePercent == 0)
+      m_pCache = new CSimpleFileCache();
+    else
+-     m_pCache = new CCircularCache(g_advancedSettings.m_cacheMemBufferSize
+-                                 , std::max<unsigned int>( g_advancedSettings.m_cacheMemBufferSize / 4, 1024 * 1024));
++   {
++     //set cache size of m_freeMemCachePercent of free ram,  with hardcoded 1 GB upper limit
++     MEMORYSTATUSEX stat;
++     stat.dwLength = sizeof(MEMORYSTATUSEX);
++     GlobalMemoryStatusEx(&stat);
++
++     //limit max cache to 1 GB
++     unsigned int maxcache = (1024 * 1024 * 1000);
++     double ramamount = (stat.ullAvailPhys * (g_advancedSettings.m_freeMemCachePercent / 100.00));
++
++     unsigned int cacheRam = std::min(static_cast<unsigned int>(ramamount), maxcache);
++
++     unsigned int frontCache = static_cast<unsigned int>(cacheRam * 0.75);
++     unsigned int backCache = cacheRam - frontCache;
++
++     m_pCache = new CCircularCache(frontCache, std::max<unsigned int>(backCache, 1024 * 1024));
++   }
++
+    m_seekPossible = 0;
+    m_cacheFull = false;
+ }
+diff --git a/xbmc/filesystem/MemBufferCache.cpp b/xbmc/filesystem/MemBufferCache.cpp
+index aee139c..cc8c3f0 100644
+--- a/xbmc/filesystem/MemBufferCache.cpp
++++ b/xbmc/filesystem/MemBufferCache.cpp
+@@ -38,9 +38,9 @@
+  : CCacheStrategy()
+ {
+   m_nStartPosition = 0;
+-  m_buffer.Create(g_advancedSettings.m_cacheMemBufferSize + 1);
+-  m_HistoryBuffer.Create(g_advancedSettings.m_cacheMemBufferSize + 1);
+-  m_forwardBuffer.Create(g_advancedSettings.m_cacheMemBufferSize + 1);
++  m_buffer.Create((1024 * 1024 * 10) + 1);
++  m_HistoryBuffer.Create((1024 * 1024 * 10) + 1);
++  m_forwardBuffer.Create((1024 * 1024 * 10) + 1);
+ }
+ 
+ 
+diff --git a/xbmc/settings/AdvancedSettings.cpp b/xbmc/settings/AdvancedSettings.cpp
+index f4b02db..a666cf6 100644
+--- a/xbmc/settings/AdvancedSettings.cpp
++++ b/xbmc/settings/AdvancedSettings.cpp
+@@ -321,7 +321,8 @@ void CAdvancedSettings::Initialize()
+ 
+   m_measureRefreshrate = false;
+ 
+-  m_cacheMemBufferSize = 1024 * 1024 * 20;
++  m_alwaysForceBuffer = false;
++  m_freeMemCachePercent = 50;
+   m_addonPackageFolderSize = 200;
+ 
+   m_jsonOutputCompact = true;
+@@ -719,11 +720,12 @@ void CAdvancedSettings::ParseSettingsFile(const CStdString &file)
+   pElement = pRootElement->FirstChildElement("network");
+   if (pElement)
+   {
++    XMLUtils::GetBoolean(pElement, "alwaysforcebuffer", m_alwaysForceBuffer);
+     XMLUtils::GetInt(pElement, "curlclienttimeout", m_curlconnecttimeout, 1, 1000);
+     XMLUtils::GetInt(pElement, "curllowspeedtime", m_curllowspeedtime, 1, 1000);
+     XMLUtils::GetInt(pElement, "curlretries", m_curlretries, 0, 10);
+     XMLUtils::GetBoolean(pElement,"disableipv6", m_curlDisableIPV6);
+-    XMLUtils::GetUInt(pElement, "cachemembuffersize", m_cacheMemBufferSize);
++    XMLUtils::GetInt(pElement, "freememorycachepercent", m_freeMemCachePercent, 0, 80);
+   }
+ 
+   pElement = pRootElement->FirstChildElement("jsonrpc");
+diff --git a/xbmc/settings/AdvancedSettings.h b/xbmc/settings/AdvancedSettings.h
+index b6bf23a..648e03b 100644
+--- a/xbmc/settings/AdvancedSettings.h
++++ b/xbmc/settings/AdvancedSettings.h
+@@ -352,7 +352,8 @@ class CAdvancedSettings : public ISettingsHandler
+     int  m_guiDirtyRegionNoFlipTimeout;
+     unsigned int m_addonPackageFolderSize;
+ 
+-    unsigned int m_cacheMemBufferSize;
++    bool m_alwaysForceBuffer;
++    int m_freeMemCachePercent;
+ 
+     bool m_jsonOutputCompact;
+     unsigned int m_jsonTcpPort;
+-- 
+1.8.1.5

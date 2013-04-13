@@ -23,7 +23,7 @@ PATCHES=""
 if [ "$1" = "12" ]; then
 PATCHES="TPNno.patch
         DualAudioOutput12.patch
-        NetworkCachingRedux.patch
+        NetworkCachingRedux12.patch
         EGLRes.patch
         XBianSysSum.patch
         RemoveGUISoundSettings.patch
@@ -35,6 +35,7 @@ PATCHES="TPNno.patch
         PowerManager.patch"
 elif [ "$1" = "13" ]; then
 PATCHES="TPNno.patch
+        NetworkCachingRedux13.patch
         DualAudioOutput13.patch
         EGLRes.patch
         XBianSysSum.patch
