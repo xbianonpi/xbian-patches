@@ -1946,3 +1946,53 @@
  config DVB_USB_MXL111SF
  	tristate "MxL111SF DTV USB2.0 support"
  	depends on DVB_USB
+--- a/media/dvb/dvb-usb/it913xv1.c
++++ b/media/dvb/dvb-usb/it913xv1.c
+@@ -463,6 +463,18 @@
+  case USB_PID_ITETECH_IT9135_9005:
+ 		props->rc.core.rc_codes = RC_MAP_IT913X_V2;
+ 		return;
++	case USB_PID_AVERMEDIA_A835B_1835:
++		props->rc.core.rc_codes = RC_MAP_IT913X_V2;
++		return;
++	case USB_PID_AVERMEDIA_A835B_2835:
++		props->rc.core.rc_codes = RC_MAP_IT913X_V2;
++		return;
++	case USB_PID_AVERMEDIA_A835B_3835:
++		props->rc.core.rc_codes = RC_MAP_IT913X_V2;
++		return;
++	case USB_PID_AVERMEDIA_A835B_4835:
++		props->rc.core.rc_codes = RC_MAP_IT913X_V2;
++		return;
+ 	default:
+ 		props->rc.core.rc_codes = RC_MAP_IT913X_V1;
+ 	}
+@@ -821,6 +833,10 @@
+ 	{ USB_DEVICE(USB_VID_KWORLD_2, USB_PID_SVEON_STV22_IT9137) },
+ 	{ USB_DEVICE(USB_VID_ITETECH, USB_PID_ITETECH_IT9135_9005) },
+ 	{ USB_DEVICE(USB_VID_ITETECH, USB_PID_ITETECH_IT9135_9006) },
++	{ USB_DEVICE(USB_VID_AVERMEDIA, USB_PID_AVERMEDIA_A835B_1835) },
++	{ USB_DEVICE(USB_VID_AVERMEDIA, USB_PID_AVERMEDIA_A835B_2835) },
++	{ USB_DEVICE(USB_VID_AVERMEDIA, USB_PID_AVERMEDIA_A835B_3835) },
++	{ USB_DEVICE(USB_VID_AVERMEDIA, USB_PID_AVERMEDIA_A835B_4835) },
+ 	{}		/* Terminating entry */
+ };
+ 
+@@ -913,6 +929,18 @@
+ 		{   "ITE 9135(9006) Generic",
+ 			{ &it913x_table[4], NULL },
+ 			},
++		{ "Avermedia A835B(1835)",
++			{ &it913x_table[5], NULL },
++			},
++		{ "Avermedia A835B(2835)",
++			{ &it913x_table[6], NULL },
++			},
++		{ "Avermedia A835B(3835)",
++			{ &it913x_table[7], NULL },
++			},
++		{ "Avermedia A835B(4835)",
++			{ &it913x_table[8], NULL },
++			},
+ 	}
+ };
