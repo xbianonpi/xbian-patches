@@ -35,7 +35,7 @@
  obj-$(CONFIG_DVB_USB_UMT_010) += dvb-usb-dibusb-common.o dvb-usb-umt-010.o
  
 --- /dev/null
-+++ drivers/media/usb/dvb-usb/it913xv1.c
++++ b/drivers/media/usb/dvb-usb/it913xv1.c
 @@ -0,0 +1,931 @@
 +/* DVB USB compliant linux driver for IT9137
 + *
@@ -969,7 +969,7 @@
 +MODULE_VERSION("1.28");
 +MODULE_LICENSE("GPL");
 --- /dev/null
-+++ drivers/media/usb/dvb-usb/it913xv2.c
++++ b/drivers/media/usb/dvb-usb/it913xv2.c
 @@ -0,0 +1,931 @@
 +/* DVB USB compliant linux driver for IT9137
 + *
