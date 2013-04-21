@@ -1902,8 +1902,8 @@
 +MODULE_DESCRIPTION("it913x USB 2 Driver");
 +MODULE_VERSION("1.28");
 +MODULE_LICENSE("GPL");
---- a/media/usb/dvb-usb/it913xv1.c
-+++ b/media/usb/dvb-usb/it913xv1.c
+--- a/drivers/media/usb/dvb-usb/it913xv1.c
++++ b/drivers/media/usb/dvb-usb/it913xv1.c
 @@ -463,6 +463,18 @@
   case USB_PID_ITETECH_IT9135_9005:
  		props->rc.core.rc_codes = RC_MAP_IT913X_V2;
