@@ -17,12 +17,11 @@
 #
 # Patches that are currently not working (need an upgrade) :
 # XBMC13: eGalaxTouchScreen.patch, DualAudioOutput13.patch
-# XBMC12: eGalaxTouchScreen.patch
+# XBMC12: eGalaxTouchScreen.patch, DualAudioOutput12.patch
 
 PATCHES=""
 if [ "$1" = "12" ]; then
 PATCHES="TPNno.patch
-        DualAudioOutput12.patch
         NetworkCachingRedux12.patch
         EGLRes.patch
         XBianSysSum.patch
