@@ -16,7 +16,7 @@
 #with XBian. If not, see <http://www.gnu.org/licenses/>
 #
 # Patches that are currently not working (need an upgrade) :
-# XBMC13: eGalaxTouchScreen.patch, DualAudioOutput13.patch
+# XBMC13: eGalaxTouchScreen.patch, DualAudioOutput13.patch, RemoveGUISoundSettings.patch, WOL13.patch
 # XBMC12: eGalaxTouchScreen.patch, DualAudioOutput12.patch
 
 PATCHES=""
@@ -37,9 +37,7 @@ PATCHES="TPNno.patch
         NetworkCachingRedux13.patch
         EGLRes.patch
         XBianSysSum.patch
-        RemoveGUISoundSettings.patch
         Wiimote.patch
-        WOL13.patch
         Splash.patch
         XBianConfluence.patch
         PowerManager.patch"
