@@ -17,13 +17,14 @@
 #
 # Patches that are currently not working (need an upgrade) :
 # XBMC13: eGalaxTouchScreen.patch, DualAudioOutput13.patch, RemoveGUISoundSettings.patch, WOL13.patch
-# XBMC12: eGalaxTouchScreen.patch, DualAudioOutput12.patch
+# XBMC12: eGalaxTouchScreen.patch
 
 PATCHES=""
 if [ "$1" = "12" ]; then
 PATCHES="TPNno.patch
         NetworkCachingRedux12.patch
         EGLRes.patch
+        DualAudioOutput12.patch
         XBianSysSum.patch
         RemoveGUISoundSettings.patch
         Wiimote.patch
