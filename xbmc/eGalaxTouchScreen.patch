@@ -107,7 +107,7 @@ From: http://code.google.com/p/andrei-development/downloads/detail?name=eGalax_p
  
  CMouseStat::CMouseStat()
  {
-@@ -45,14 +47,58 @@
+@@ -45,12 +47,58 @@
  
  void CMouseStat::HandleEvent(XBMC_Event& newEvent)
  {
@@ -115,65 +115,61 @@ From: http://code.google.com/p/andrei-development/downloads/detail?name=eGalax_p
 +  int dy = 0;
 +  int ignore_action = 0;
 +  unsigned int screen_width, screen_height;
-+
-+  /* Ignore press events until the previous touch coordinates are set to the first 
-+   * press on the touchscreen. To detect the press action, we check wether 
++  /* Ignore press events until the previous touch coordinates are set to the first
++   * press on the touchscreen. To detect the press action, we check wether
 +   * newEvent.motion is outside of the g_graphicsContext(newEvent.motion was
 +   * set outside of the g_graphicsContext in the function CLinuxInputDevice::KeyEvent
 +   * in LinuxInputDevices.cpp file from xbmc/input/linux directory)
-+   */
++  */
++
 +  screen_width = g_graphicsContext.GetWidth();
 +  screen_height = g_graphicsContext.GetHeight();
-+
++    
 +  // First touch: ignore button press, but keep press state
 +  if(newEvent.motion.x > screen_width  || newEvent.motion.y > screen_height)
 +  {
-+    ignore_action = 1;
-+    newEvent.button.button = XBMC_BUTTON_LEFT;
-+    newEvent.button.type = XBMC_MOUSEBUTTONDOWN;
++      ignore_action = 1;
++      newEvent.button.button = XBMC_BUTTON_LEFT;
++      newEvent.button.type = XBMC_MOUSEBUTTONDOWN;
 +  }
-+
++    
    // Save the mouse position and the size of the last move
--  int dx = newEvent.motion.x - m_mouseState.x;
--  int dy = newEvent.motion.y - m_mouseState.y;
--  
--  m_mouseState.dx = dx;
--  m_mouseState.dy = dy;
--  m_mouseState.x  = std::max(0, std::min(m_maxX, m_mouseState.x + dx));
--  m_mouseState.y  = std::max(0, std::min(m_maxY, m_mouseState.y + dy));
-+
-+  // Second touch: ignore only first x movement after press and set the right x
-+  if(newEvent.motion.x < screen_width && newEvent.motion.y > screen_height)
-+  {
-+    m_mouseState.x = newEvent.motion.x;
-+    dx = newEvent.motion.x - m_mouseState.x;
-+    m_mouseState.dx = dx;
-+    m_mouseState.x  = std::max(0, std::min(m_maxX, m_mouseState.x + dx));
-+  }
-+
-+  // Third touch: ignore only first y movement after press and set the right y
-+  if(newEvent.motion.x > screen_width && newEvent.motion.y < screen_height)
-+  {
-+    m_mouseState.y = newEvent.motion.y;
-+    dy = newEvent.motion.y - m_mouseState.y;
-+    m_mouseState.dy = dy;
-+    m_mouseState.y  = std::max(0, std::min(m_maxY, m_mouseState.y + dy));
-+  }
-+
-+  // Treat normally the rest of the touches
-+  if(newEvent.motion.x < screen_width && newEvent.motion.y < screen_height)
-+  {
-+    dx = newEvent.motion.x - m_mouseState.x;
-+    m_mouseState.dx = dx;
-+    m_mouseState.x  = std::max(0, std::min(m_maxX, m_mouseState.x + dx));
-+    dy = newEvent.motion.y - m_mouseState.y;
-+    m_mouseState.dy = dy;
-+    m_mouseState.y  = std::max(0, std::min(m_maxY, m_mouseState.y + dy));
-+  }
- 
-   // Fill in the public members
-   if (newEvent.button.type == XBMC_MOUSEBUTTONDOWN)
-@@ -89,7 +135,12 @@
+-  int dx, dy;
+   if (newEvent.type == XBMC_MOUSEMOTION)
+   {
+-    dx = newEvent.motion.x - m_mouseState.x;
+-    dy = newEvent.motion.y - m_mouseState.y;
++      if(newEvent.motion.x < screen_width && newEvent.motion.y > screen_height)
++      {
++          m_mouseState.x = newEvent.motion.x;
++          dx = newEvent.motion.x - m_mouseState.x;
++          m_mouseState.dx = dx;
++          m_mouseState.x  = std::max(0, std::min(m_maxX, m_mouseState.x + dx));
++      }
++      
++      // Third touch: ignore only first y movement after press and set the right y
++      if(newEvent.motion.x > screen_width && newEvent.motion.y < screen_height)
++      {
++          m_mouseState.y = newEvent.motion.y;
++          dy = newEvent.motion.y - m_mouseState.y;
++          m_mouseState.dy = dy;
++          m_mouseState.y  = std::max(0, std::min(m_maxY, m_mouseState.y + dy));
++      }
++      
++      // Treat normally the rest of the touches
++      if(newEvent.motion.x < screen_width && newEvent.motion.y < screen_height)
++      {
++          dx = newEvent.motion.x - m_mouseState.x;
++          m_mouseState.dx = dx;
++          m_mouseState.x  = std::max(0, std::min(m_maxX, m_mouseState.x + dx));
++          dy = newEvent.motion.y - m_mouseState.y;
++          m_mouseState.dy = dy;
++          m_mouseState.y  = std::max(0, std::min(m_maxY, m_mouseState.y + dy));
++      }
+   }
+   else if (newEvent.type == XBMC_MOUSEBUTTONDOWN || newEvent.type == XBMC_MOUSEBUTTONUP)
+   {
+@@ -101,7 +149,12 @@
  
      // CButtonState::Update does the hard work of checking the button state
      // and spotting drags, doubleclicks etc
@@ -187,6 +183,3 @@ From: http://code.google.com/p/andrei-development/downloads/detail?name=eGalax_p
      switch (action)
      {
      case CButtonState::MB_SHORT_CLICK:
-
-
- 
