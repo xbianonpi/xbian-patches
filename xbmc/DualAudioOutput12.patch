@@ -40,7 +40,7 @@ index 10c3329..1470685 100644
 +      if(!m_omx_render_HDMI.Initialize((const std::string)componentName, OMX_IndexParamAudioInit))
 +          return false;
 +      
-+      m_omx_render_HDMI->ResetEos();
++      m_omx_render_HDMI.ResetEos();
 +      
 +      OMX_CONFIG_BRCMAUDIODESTINATIONTYPE audioDest;
 +      OMX_INIT_STRUCTURE(audioDest);
@@ -72,7 +72,7 @@ index 10c3329..1470685 100644
 +      if(!m_omx_render_analog.Initialize((const std::string)componentName, OMX_IndexParamAudioInit))
 +          return false;
 +      
-+      m_omx_render_analog->ResetEos();
++      m_omx_render_analog.ResetEos();
  
 -  omx_err = m_omx_render->SetConfig(OMX_IndexConfigBrcmAudioDestination, &audioDest);
 -  if (omx_err != OMX_ErrorNone)
