@@ -36,7 +36,6 @@ PATCHES="TPNno.patch
         PowerManager.patch"
 elif [ "$1" = "13" ]; then
 PATCHES="TPNno.patch
-        eGalaxTouchScreen.patch
         NetworkCachingRedux13.patch
         EGLRes.patch
         XBianSysSum.patch
