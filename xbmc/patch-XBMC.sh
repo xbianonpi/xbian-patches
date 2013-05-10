@@ -27,6 +27,7 @@ PATCHES="TPNno.patch
         EGLRes.patch
         DualAudioOutput12.patch
         XBianSysSum.patch
+        ReduceMenuFontSize.patch
         RemoveGUISoundSettings.patch
         Wiimote.patch
         WOL12.patch
@@ -41,6 +42,7 @@ PATCHES="TPNno.patch
         EGLRes.patch
         CECKnownCode.patch
         WOL13.patch
+        ReduceMenuFontSize.patch
         XBianSysSum.patch
         Wiimote.patch
         Splash.patch
