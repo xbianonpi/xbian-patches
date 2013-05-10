@@ -1,11 +1,11 @@
 diff --git a/xbmc/ApplicationMessenger.cpp b/xbmc/ApplicationMessenger.cpp
-index 5ab05fd..bd30eb4 100644
+index 4a626e9..63aab2c 100644
 --- a/xbmc/ApplicationMessenger.cpp
 +++ b/xbmc/ApplicationMessenger.cpp
-@@ -270,6 +270,12 @@ void CApplicationMessenger::ProcessMessage(ThreadMessage *pMsg)
+@@ -264,6 +264,12 @@ void CApplicationMessenger::ProcessMessage(ThreadMessage *pMsg)
        }
        break;
-
+ 
 +    case TMSG_QUITWAIT:
 +      {
 +        g_application.Stop(EXITCODE_QUITWAIT);
@@ -15,10 +15,10 @@ index 5ab05fd..bd30eb4 100644
      case TMSG_HIBERNATE:
        {
          g_PVRManager.SetWakeupCommand();
-@@ -1105,6 +1111,12 @@ void CApplicationMessenger::Shutdown()
+@@ -1065,6 +1071,12 @@ void CApplicationMessenger::Shutdown()
    SendMessage(tMsg);
  }
-
+ 
 +void CApplicationMessenger::QuitWait()
 +{
 +  ThreadMessage tMsg = {TMSG_QUITWAIT};
@@ -28,8 +28,20 @@ index 5ab05fd..bd30eb4 100644
  void CApplicationMessenger::Powerdown()
  {
    ThreadMessage tMsg = {TMSG_POWERDOWN};
+diff --git a/xbmc/ApplicationMessenger.h b/xbmc/ApplicationMessenger.h
+index 0bceaaa..27c88ee 100644
+--- a/xbmc/ApplicationMessenger.h
++++ b/xbmc/ApplicationMessenger.h
+@@ -88,6 +88,7 @@ namespace MUSIC_INFO
+ #define TMSG_RENDERER_FLUSH       312
+ #define TMSG_INHIBITIDLESHUTDOWN  313
+ #define TMSG_LOADPROFILE          314
++#define TMSG_QUITWAIT             350
+ 
+ #define TMSG_NETWORKMESSAGE         500
+ 
 diff --git a/xbmc/XBApplicationEx.h b/xbmc/XBApplicationEx.h
-index 2cb42e5..bf8a054 100644
+index ff0be99..fe49780 100644
 --- a/xbmc/XBApplicationEx.h
 +++ b/xbmc/XBApplicationEx.h
 @@ -29,6 +29,7 @@ enum {
@@ -38,26 +50,26 @@ index 2cb42e5..bf8a054 100644
    EXITCODE_REBOOT    = 66,
 +  EXITCODE_QUITWAIT  = 50,
  };
-
+ 
  class CXBApplicationEx : public IWindowManagerCallback
 diff --git a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
-index 386d3e4..2ce0375 100644
+index 056a77e..68ad774 100644
 --- a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
 +++ b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
-@@ -624,7 +624,7 @@ int CPeripheralCecAdapter::CecCommand(void *cbParam, const cec_command command)
+@@ -651,7 +651,7 @@ int CPeripheralCecAdapter::CecCommand(void *cbParam, const cec_command command)
      case CEC_OPCODE_STANDBY:
        /* a device was put in standby mode */
        if (command.initiator == CECDEVICE_TV &&
 -          (adapter->m_configuration.bPowerOffOnStandby == 1 || adapter->m_configuration.bShutdownOnStandby == 1) &&
-+          (adapter->m_configuration.bPowerOffOnStandby == 1 || adapter->m_configuration.bShutdownOnStandby == 1 || adapter->m_configuration.bPowerOffOnStandby == 2 ) &&
++          (adapter->m_configuration.bPowerOffOnStandby == 1 || adapter->m_configuration.bShutdownOnStandby == 1 || adapter->m_configuration.bShutdownOnStandby == 2 ) &&
            (!adapter->m_screensaverLastActivated.IsValid() || CDateTime::GetCurrentDateTime() - adapter->m_screensaverLastActivated > CDateTimeSpan(0, 0, 0, SCREENSAVER_TIMEOUT)))
        {
          adapter->m_bStarted = false;
-@@ -632,6 +632,8 @@ int CPeripheralCecAdapter::CecCommand(void *cbParam, const cec_command command)
+@@ -659,6 +659,8 @@ int CPeripheralCecAdapter::CecCommand(void *cbParam, const cec_command command)
            CApplicationMessenger::Get().Suspend();
          else if (adapter->m_configuration.bShutdownOnStandby == 1)
            CApplicationMessenger::Get().Shutdown();
-+        else if (adapter->m_configuration.bPowerOffOnStandby == 2)
++        else if (adapter->m_configuration.bShutdownOnStandby == 2)
 +          CApplicationMessenger::Get().QuitWait();
        }
        break;
