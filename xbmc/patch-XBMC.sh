@@ -30,6 +30,7 @@ PATCHES="TPNno.patch
         RemoveGUISoundSettings.patch
         Wiimote.patch
         WOL12.patch
+        CECKnownCode.patch
         Splash.patch
         XBianConfluence.patch
         Hotplug.patch
@@ -38,6 +39,7 @@ elif [ "$1" = "13" ]; then
 PATCHES="TPNno.patch
         NetworkCachingRedux13.patch
         EGLRes.patch
+        CECKnownCode.patch
         WOL13.patch
         XBianSysSum.patch
         Wiimote.patch
