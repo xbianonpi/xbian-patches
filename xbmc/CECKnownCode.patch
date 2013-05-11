@@ -29,7 +29,7 @@ index 4a626e9..63aab2c 100644
  {
    ThreadMessage tMsg = {TMSG_POWERDOWN};
 diff --git a/xbmc/ApplicationMessenger.h b/xbmc/ApplicationMessenger.h
-index 0bceaaa..27c88ee 100644
+index 0bceaaa..8acb396 100644
 --- a/xbmc/ApplicationMessenger.h
 +++ b/xbmc/ApplicationMessenger.h
 @@ -88,6 +88,7 @@ namespace MUSIC_INFO
@@ -40,6 +40,14 @@ index 0bceaaa..27c88ee 100644
  
  #define TMSG_NETWORKMESSAGE         500
  
+@@ -192,6 +193,7 @@ public:
+   void Shutdown();
+   void Powerdown();
+   void Quit();
++  void QuitWait();
+   void Hibernate();
+   void Suspend();
+   void Restart();
 diff --git a/xbmc/XBApplicationEx.h b/xbmc/XBApplicationEx.h
 index ff0be99..fe49780 100644
 --- a/xbmc/XBApplicationEx.h
