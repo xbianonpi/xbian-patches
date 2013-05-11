@@ -16,13 +16,13 @@
 #with XBian. If not, see <http://www.gnu.org/licenses/>
 #
 # Patches that are currently not working (need an upgrade) :
-# XBMC13: eGalaxTouchScreen.patch, DualAudioOutput13.patch, RemoveGUISoundSettings.patch, CECKnownCode.patch
+# XBMC13: eGalaxTouchScreen.patch, DualAudioOutput13.patch, RemoveGUISoundSettings.patch
 # XBMC12: eGalaxTouchScreen.patch, CECKnownCode.patch
 
 PATCHES=""
 if [ "$1" = "12" ]; then
 PATCHES="TPNno.patch
-        
+        CECKnownCode.patch
         NetworkCachingRedux12.patch
         EGLRes.patch
         DualAudioOutput12.patch
