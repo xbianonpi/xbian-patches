@@ -35,7 +35,8 @@ PATCHES="TPNno.patch
         Splash.patch
         XBianConfluence.patch
         Hotplug.patch
-        PowerManager.patch"
+        PowerManager.patch
+        MediaLibrary.patch"
 elif [ "$1" = "13" ]; then
 PATCHES="TPNno.patch
         EGLRes.patch
@@ -43,7 +44,8 @@ PATCHES="TPNno.patch
         Wiimote.patch
         Splash.patch
         XBianConfluence.patch
-        PowerManager.patch"
+        PowerManager.patch
+        MediaLibrary.patch"
 fi
 
 for patch in $PATCHES
