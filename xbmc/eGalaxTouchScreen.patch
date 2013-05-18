@@ -31,12 +31,12 @@ From: http://code.google.com/p/andrei-development/downloads/detail?name=eGalax_p
  {
    int code = levt.code;
  
-+  /* [touchscreens] when PRESS or RELEASE action occurs */
++  /* [touchscreens] when PRESS or RELEASE action occurs 
 +  if(levt.code == BTN_TOUCH)
 +  {
 +    m_mouseX = g_graphicsContext.GetWidth() + 1;
 +    m_mouseY = g_graphicsContext.GetHeight() + 1;
-+  }
++  } */
 +
    /* map touchscreen and smartpad events to button mouse */
    if (code == BTN_TOUCH || code == BTN_TOOL_FINGER)
@@ -95,91 +95,3 @@ From: http://code.google.com/p/andrei-development/downloads/detail?name=eGalax_p
 +  
    /* get event type bits */
    ioctl(fd, EVIOCGBIT(0, sizeof(evbit)), evbit);
- 
---- a/xbmc/input/MouseStat.cpp	2013-01-29 16:20:27.000000000 +0200
-+++ b/xbmc/input/MouseStat.cpp	2013-02-24 11:27:43.424462535 +0200
-@@ -22,6 +22,8 @@
- #include "guilib/Key.h"
- #include "windowing/WindowingFactory.h"
- #include "utils/TimeUtils.h"
-+#include "guilib/GraphicContext.h"
-+
- 
- CMouseStat::CMouseStat()
- {
-@@ -45,12 +47,58 @@
- 
- void CMouseStat::HandleEvent(XBMC_Event& newEvent)
- {
-+  int dx = 0;
-+  int dy = 0;
-+  int ignore_action = 0;
-+  unsigned int screen_width, screen_height;
-+  /* Ignore press events until the previous touch coordinates are set to the first
-+   * press on the touchscreen. To detect the press action, we check wether
-+   * newEvent.motion is outside of the g_graphicsContext(newEvent.motion was
-+   * set outside of the g_graphicsContext in the function CLinuxInputDevice::KeyEvent
-+   * in LinuxInputDevices.cpp file from xbmc/input/linux directory)
-+  */
-+
-+  screen_width = g_graphicsContext.GetWidth();
-+  screen_height = g_graphicsContext.GetHeight();
-+    
-+  // First touch: ignore button press, but keep press state
-+  if(newEvent.motion.x > screen_width  || newEvent.motion.y > screen_height)
-+  {
-+      ignore_action = 1;
-+      newEvent.button.button = XBMC_BUTTON_LEFT;
-+      newEvent.button.type = XBMC_MOUSEBUTTONDOWN;
-+  }
-+    
-   // Save the mouse position and the size of the last move
--  int dx, dy;
-   if (newEvent.type == XBMC_MOUSEMOTION)
-   {
--    dx = newEvent.motion.x - m_mouseState.x;
--    dy = newEvent.motion.y - m_mouseState.y;
-+      if(newEvent.motion.x < screen_width && newEvent.motion.y > screen_height)
-+      {
-+          m_mouseState.x = newEvent.motion.x;
-+          dx = newEvent.motion.x - m_mouseState.x;
-+          m_mouseState.dx = dx;
-+          m_mouseState.x  = std::max(0, std::min(m_maxX, m_mouseState.x + dx));
-+      }
-+      
-+      // Third touch: ignore only first y movement after press and set the right y
-+      if(newEvent.motion.x > screen_width && newEvent.motion.y < screen_height)
-+      {
-+          m_mouseState.y = newEvent.motion.y;
-+          dy = newEvent.motion.y - m_mouseState.y;
-+          m_mouseState.dy = dy;
-+          m_mouseState.y  = std::max(0, std::min(m_maxY, m_mouseState.y + dy));
-+      }
-+      
-+      // Treat normally the rest of the touches
-+      if(newEvent.motion.x < screen_width && newEvent.motion.y < screen_height)
-+      {
-+          dx = newEvent.motion.x - m_mouseState.x;
-+          m_mouseState.dx = dx;
-+          m_mouseState.x  = std::max(0, std::min(m_maxX, m_mouseState.x + dx));
-+          dy = newEvent.motion.y - m_mouseState.y;
-+          m_mouseState.dy = dy;
-+          m_mouseState.y  = std::max(0, std::min(m_maxY, m_mouseState.y + dy));
-+      }
-   }
-   else if (newEvent.type == XBMC_MOUSEBUTTONDOWN || newEvent.type == XBMC_MOUSEBUTTONUP)
-   {
-@@ -101,7 +149,12 @@
- 
-     // CButtonState::Update does the hard work of checking the button state
-     // and spotting drags, doubleclicks etc
--    CButtonState::BUTTON_ACTION action = m_buttonState[i].Update(now, m_mouseState.x, m_mouseState.y, m_mouseState.button[i]);
-+    CButtonState::BUTTON_ACTION action = CButtonState::MB_NONE;
-+
-+    // [touchscreens] ignore press actions until the previous point is set as the first press point
-+    if(!ignore_action)
-+      action = m_buttonState[i].Update(now, m_mouseState.x, m_mouseState.y, m_mouseState.button[i]);
-+
-     switch (action)
-     {
-     case CButtonState::MB_SHORT_CLICK:
