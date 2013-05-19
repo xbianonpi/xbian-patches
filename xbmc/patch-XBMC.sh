@@ -17,7 +17,7 @@
 #
 # Patches that are currently not working (need an upgrade) :
 # XBMC13: DualAudioOutput13.patch, RemoveGUISoundSettings.patch, NetworkCachingRedux13.patch
-#         ReduceMenuFontSize.patch
+#         ReduceMenuFontSize.patch, CECKnownCode.patch
 # XBMC12: CECKnownCode.patch
 
 PATCHES=""
@@ -41,7 +41,6 @@ PATCHES="TPNno.patch
 elif [ "$1" = "13" ]; then
 PATCHES="TPNno.patch
         EGLRes.patch
-        CECKnownCode.patch
         eGalaxTouchScreen.patch
         XBianSysSum.patch
         Wiimote.patch
