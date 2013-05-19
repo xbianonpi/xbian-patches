@@ -61,22 +61,18 @@ index ff0be99..fe49780 100644
  
  class CXBApplicationEx : public IWindowManagerCallback
 diff --git a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
-index 056a77e..68ad774 100644
+index 056a77e..a14fdb2 100644
 --- a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
 +++ b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
-@@ -651,7 +651,7 @@ int CPeripheralCecAdapter::CecCommand(void *cbParam, const cec_command command)
-     case CEC_OPCODE_STANDBY:
-       /* a device was put in standby mode */
-       if (command.initiator == CECDEVICE_TV &&
--          (adapter->m_configuration.bPowerOffOnStandby == 1 || adapter->m_configuration.bShutdownOnStandby == 1) &&
-+          (adapter->m_configuration.bPowerOffOnStandby == 1 || adapter->m_configuration.bShutdownOnStandby == 1 || adapter->m_configuration.bShutdownOnStandby == 2 ) &&
-           (!adapter->m_screensaverLastActivated.IsValid() || CDateTime::GetCurrentDateTime() - adapter->m_screensaverLastActivated > CDateTimeSpan(0, 0, 0, SCREENSAVER_TIMEOUT)))
+@@ -656,9 +656,11 @@ int CPeripheralCecAdapter::CecCommand(void *cbParam, const cec_command command)
        {
          adapter->m_bStarted = false;
-@@ -659,6 +659,8 @@ int CPeripheralCecAdapter::CecCommand(void *cbParam, const cec_command command)
-           CApplicationMessenger::Get().Suspend();
+         if (adapter->m_configuration.bPowerOffOnStandby == 1)
+-          CApplicationMessenger::Get().Suspend();
++          CApplicationMessenger::Get().QuitWait();
          else if (adapter->m_configuration.bShutdownOnStandby == 1)
-           CApplicationMessenger::Get().Shutdown();
+-          CApplicationMessenger::Get().Shutdown();
++          CApplicationMessenger::Get().QuitWait();
 +        else if (adapter->m_configuration.bShutdownOnStandby == 2)
 +          CApplicationMessenger::Get().QuitWait();
        }
