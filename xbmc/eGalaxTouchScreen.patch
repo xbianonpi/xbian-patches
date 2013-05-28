@@ -1,6 +1,6 @@
 From: http://code.google.com/p/andrei-development/downloads/detail?name=eGalax_patch_for_XBMC_12.tar.gz
 
---- a/xbmc/input/MouseStat.h	2013-01-29 16:20:27.000000000 +0200
+--- a/xbmc/input/MouseStat.h     2013-01-29 16:20:27.000000000 +0200
 +++ b/xbmc/input/MouseStat.h	2013-02-24 10:47:27.570767079 +0200
 @@ -123,7 +123,7 @@
       */
@@ -75,7 +75,7 @@ From: http://code.google.com/p/andrei-development/downloads/detail?name=eGalax_p
    CLog::Log(LOGINFO, "opened device '%s' (file name %s), m_bSkipNonKeyEvents %d\n", m_deviceName, m_fileName.c_str(), m_bSkipNonKeyEvents);
  
 +  /* [touchscreens] read calibration values(this should be changed to an XML file) */
-+  if(strstr(m_deviceName, "eGalax") || strstr(m_deviceName, "Touch"))
++  if(strstr(m_deviceName, "eGalax") || strstr(m_deviceName, "Touch") || strstr(m_deviceName, "Acer T230H"))
 +  {
 +      c_fp = fopen("/usr/share/eGalaxCalibration/touchscreen_axes_calib", "r");
 +      if (c_fp)
