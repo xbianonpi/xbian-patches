@@ -69,7 +69,7 @@ index 056a77e..b46efe1 100644
        /* a device was put in standby mode */
        if (command.initiator == CECDEVICE_TV &&
 -          (adapter->m_configuration.bPowerOffOnStandby == 1 || adapter->m_configuration.bShutdownOnStandby == 1) &&
-+          (adapter->m_configuration.bPowerOffOnStandby == 1 || adapter->m_configuration.bShutdownOnStandby == 1 || adapter->m_configuration.bShutdownOnStandby == 2) &&
++          (adapter->m_configuration.bPowerOffOnStandby == 1 || adapter->m_configuration.bShutdownOnStandby == 1 || adapter->m_configuration.bPowerOffOnStandby == 2) &&
            (!adapter->m_screensaverLastActivated.IsValid() || CDateTime::GetCurrentDateTime() - adapter->m_screensaverLastActivated > CDateTimeSpan(0, 0, 0, SCREENSAVER_TIMEOUT)))
        {
          adapter->m_bStarted = false;
@@ -79,7 +79,7 @@ index 056a77e..b46efe1 100644
          else if (adapter->m_configuration.bShutdownOnStandby == 1)
 -          CApplicationMessenger::Get().Shutdown();
 +          CApplicationMessenger::Get().QuitWait();
-+        else if (adapter->m_configuration.bShutdownOnStandby == 2)
++        else if (adapter->m_configuration.bPowerOffOnStandby == 2)
 +          CApplicationMessenger::Get().QuitWait();
        }
        break;
