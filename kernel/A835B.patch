@@ -1,8 +1,8 @@
 diff --git a/drivers/media/dvb-core/dvb-usb-ids.h
 b/drivers/media/dvb-core/dvb-usb-ids.h
 index 26c4481..84d7759 100644
---- a/drivers/media/dvb-core/dvb-usb-ids.h
-+++ b/drivers/media/dvb-core/dvb-usb-ids.h
+--- a/drivers/media/dvb/dvb-usb/dvb-usb-ids.h 
++++ b/drivers/media/dvb/dvb-usb/dvb-usb-ids.h 
 @@ -231,6 +231,10 @@ 
  #define USB_PID_AVERMEDIA_A815M                                0x815a
  #define USB_PID_AVERMEDIA_A835                         0xa835
