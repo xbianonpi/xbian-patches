@@ -23,7 +23,6 @@
 PATCHES=""
 if [ "$1" = "12" ]; then
 PATCHES="TPNno.patch
-        eGalaxTouchScreen.patch
         FixSeekHangAfterEOS.patch
         NetworkCachingRedux12.patch
         EGLRes.patch
@@ -41,7 +40,6 @@ PATCHES="TPNno.patch
 elif [ "$1" = "13" ]; then
 PATCHES="TPNno.patch
         EGLRes.patch
-        eGalaxTouchScreen.patch
         XBianSysSum.patch
         Wiimote.patch
         Splash.patch
