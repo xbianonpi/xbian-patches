@@ -16,7 +16,7 @@
 #with XBian. If not, see <http://www.gnu.org/licenses/>
 #
 # Patches that are currently not working (need an upgrade) :
-# XBMC13: RemoveGUISoundSettings.patch, ReduceMenuFontSize.patch, eGalaxTouchscreen.patch, DualAudioOutput.patch
+# XBMC13: RemoveGUISoundSettings.patch, eGalaxTouchscreen.patch, DualAudioOutput.patch
 
 if [ "$1" = "12" ]; then
 PATCHES="Build12.patch
