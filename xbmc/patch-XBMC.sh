@@ -18,32 +18,27 @@
 # Patches that are currently not working (need an upgrade) :
 # XBMC13: DualAudioOutput13.patch, RemoveGUISoundSettings.patch
 #         ReduceMenuFontSize.patch, eGalaxTouchscreen.patch
-# XBMC12: 
+# XBMC12: DualAudioOutput12.patch
 
-PATCHES=""
 if [ "$1" = "12" ]; then
-PATCHES="TPNno.patch
-        DualAudioOutput12.patch
+PATCHES="Build12.patch
         eGalaxTouchscreen.patch
-        NetworkCachingRedux12.patch
         EGLRes.patch
         XBianSysSum.patch
         ReduceMenuFontSize.patch
         RemoveGUISoundSettings.patch
         Wiimote.patch   
         Splash.patch
-        XBianConfluence.patch
-        PowerManager.patch
-        MediaLibrary.patch"
+        XBianConfluence12.patch
+        MediaLibrary12.patch"
 elif [ "$1" = "13" ]; then
-PATCHES="TPNno.patch
+PATCHES="Build13.patch
         EGLRes.patch
         XBianSysSum.patch
         Wiimote.patch
         Splash.patch
-        XBianConfluence.patch
-        PowerManager.patch
-        MediaLibrary.patch"
+        XBianConfluence13.patch
+        MediaLibrary13.patch"
 fi
 
 for patch in $PATCHES
