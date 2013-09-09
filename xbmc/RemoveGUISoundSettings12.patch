@@ -1,4 +1,4 @@
---- a/xbmc/xbmc/settings/GUISettings.cpp	
+--- a/xbmc/settings/GUISettings.cpp	
 +++ b/xbmc/settings/GUISettings.cpp	
 @@ -878,7 +878,7 @@
    AddString(laf, "lookandfeel.font",13303,"Default", SPIN_CONTROL_TEXT);
