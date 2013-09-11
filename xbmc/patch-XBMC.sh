@@ -33,9 +33,9 @@ elif [ "$1" = "13" ]; then
 PATCHES="Build13.patch
         EGLRes.patch
         XBianSysSum.patch
+        Splash.patch
         Wiimote.patch
         RemoveGUISoundSettings13.patch
-        Splash.patch
         XBianConfluence13.patch
         MediaLibrary13.patch"
 fi
