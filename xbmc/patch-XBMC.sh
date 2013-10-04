@@ -23,6 +23,7 @@ PATCHES="Build12.patch
         eGalaxTouchscreen.patch
         EGLRes.patch
         XBianSysSum.patch
+        gnutls-for-ffmpeg.patch
         ReduceMenuFontSize.patch
         RemoveGUISoundSettings12.patch
         Wiimote.patch   
