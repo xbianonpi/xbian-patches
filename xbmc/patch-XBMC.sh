@@ -16,38 +16,32 @@
 #with XBian. If not, see <http://www.gnu.org/licenses/>
 #
 # Patches that are currently not working (need an upgrade) :
-# XBMC13: eGalaxTouchScreen.patch, DualAudioOutput13.patch, RemoveGUISoundSettings.patch
-# XBMC12: eGalaxTouchScreen.patch, CECKnownCode.patch
+# XBMC13: eGalaxTouchscreen.patch, DualAudioOutput.patch
 
-PATCHES=""
 if [ "$1" = "12" ]; then
-PATCHES="TPNno.patch
-        CECKnownCode.patch
-        NetworkCachingRedux12.patch
+PATCHES="Build12.patch
+        eGalaxTouchscreen.patch
         EGLRes.patch
-        DualAudioOutput12.patch
         XBianSysSum.patch
+        gnutls-for-ffmpeg.patch
         ReduceMenuFontSize.patch
-        RemoveGUISoundSettings.patch
-        Wiimote.patch
-        WOL12.patch     
+        RemoveGUISoundSettings12.patch
+        Wiimote.patch   
         Splash.patch
-        XBianConfluence.patch
-        Hotplug.patch
-        PowerManager.patch
-        MediaLibrary.patch"
+        XBianConfluence12.patch
+        MediaLibrary12.patch        
+        ConfluenceBtrfsNotification.patch"
+        
 elif [ "$1" = "13" ]; then
-PATCHES="TPNno.patch
-        NetworkCachingRedux13.patch
+PATCHES="Build13.patch
         EGLRes.patch
-        WOL13.patch
-        ReduceMenuFontSize.patch
         XBianSysSum.patch
-        Wiimote.patch
         Splash.patch
-        XBianConfluence.patch
-        PowerManager.patch
-        MediaLibrary.patch"
+        Wiimote.patch
+        RemoveGUISoundSettings13.patch
+        XBianConfluence13.patch
+        MediaLibrary13.patch
+        ConfluenceBtrfsNotification.patch"
 fi
 
 for patch in $PATCHES

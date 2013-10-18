@@ -1,0 +1,10 @@
+--- a/addons/skin.confluence/720p/DialogKaiToast.xml
++++ b/addons/skin.confluence/720p/DialogKaiToast.xml
+@@ -7,6 +7,7 @@
+ 	</coordinates>
+         <controls>
+ 		<control type="group">
++                        <visible>!StringCompare(Control.GetLabel(402),xbian-root-btrfs)</visible>
+ 			<animation effect="slide" start="0,0" end="-190,0" time="200" condition="Window.IsVisible(BusyDialog)">conditional</animation>
+ 	    		<control type="image">
+ 				<posx>0</posx>
