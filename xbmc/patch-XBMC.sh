@@ -30,7 +30,8 @@ PATCHES="Build12.patch
         Splash.patch
         XBianConfluence12.patch
         MediaLibrary12.patch        
-        ConfluenceBtrfsNotification.patch"
+        ConfluenceBtrfsNotification.patch
+        ConfluenceXbianWizard.patch"
         
 elif [ "$1" = "13" ]; then
 PATCHES="Build13.patch
@@ -41,7 +42,8 @@ PATCHES="Build13.patch
         RemoveGUISoundSettings13.patch
         XBianConfluence13.patch
         MediaLibrary13.patch
-        ConfluenceBtrfsNotification.patch"
+        ConfluenceBtrfsNotification.patch
+        ConfluenceXbianWizard.patch"
 fi
 
 for patch in $PATCHES
