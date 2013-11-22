@@ -16,7 +16,7 @@
 #with XBian. If not, see <http://www.gnu.org/licenses/>
 #
 # Patches that are currently not working (need an upgrade) :
-# XBMC13: eGalaxTouchscreen.patch, DualAudioOutput.patch
+# XBMC13: eGalaxTouchscreen.patch, DualAudioOutput.patch, EGLRes.patch
 
 if [ "$1" = "12" ]; then
 PATCHES="Build12.patch
@@ -32,7 +32,6 @@ PATCHES="Build12.patch
         MediaLibrary12.patch"
 elif [ "$1" = "13" ]; then
 PATCHES="Build13.patch
-        EGLRes.patch
         XBianSysSum.patch
         Splash.patch
         Wiimote.patch
