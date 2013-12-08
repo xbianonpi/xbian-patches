@@ -20,6 +20,7 @@
 
 if [ "$1" = "12" ]; then
 PATCHES="Build12.patch
+        airplay.patch
         eGalaxTouchscreen.patch
         EGLRes.patch
         XBianSysSum.patch
@@ -32,6 +33,7 @@ PATCHES="Build12.patch
         MediaLibrary12.patch"
 elif [ "$1" = "13" ]; then
 PATCHES="Build13.patch
+        airplay.patch
         Splash.patch
         Wiimote.patch
         MediaLibrary13.patch"
