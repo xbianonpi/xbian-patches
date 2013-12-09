@@ -16,14 +16,14 @@
 #with XBian. If not, see <http://www.gnu.org/licenses/>
 #
 # Patches that are currently not working (need an upgrade) :
-# XBMC13: eGalaxTouchscreen.patch, DualAudioOutput.patch, EGLRes.patch, XBianSysSum.patch, XBianConfluence13.patch, RemoveGUISoundSettings13.patch
+# XBMC13: DualAudioOutput not supported
 
 if [ "$1" = "12" ]; then
 PATCHES="Build12.patch
         airplay.patch
-        eGalaxTouchscreen.patch
-        EGLRes.patch
-        XBianSysSum.patch
+        eGalaxTouchscreen12.patch
+        EGLRes12.patch
+        XBianSysSum12.patch
         gnutls-for-ffmpeg.patch
         ReduceMenuFontSize.patch
         RemoveGUISoundSettings12.patch
@@ -34,6 +34,11 @@ PATCHES="Build12.patch
 elif [ "$1" = "13" ]; then
 PATCHES="Build13.patch
         airplay.patch
+        RemoveGUISoundSettings13.patch
+        XBianConfluence13.patch
+        EGLRes13.patch
+        XBianSysSum13.patch
+        eGalaxTouchscreen13.patch
         Splash.patch
         Wiimote.patch
         MediaLibrary13.patch"
