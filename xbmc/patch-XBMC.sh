@@ -20,7 +20,6 @@
 
 if [ "$1" = "12" ]; then
 PATCHES="Build12.patch
-        airplay.patch
         eGalaxTouchscreen12.patch
         EGLRes12.patch
         XBianSysSum12.patch
@@ -33,7 +32,6 @@ PATCHES="Build12.patch
         MediaLibrary12.patch"
 elif [ "$1" = "13" ]; then
 PATCHES="Build13.patch
-        airplay.patch
         RemoveGUISoundSettings13.patch
         XBianConfluence13.patch
         EGLRes13.patch
