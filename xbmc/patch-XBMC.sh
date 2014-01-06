@@ -16,7 +16,7 @@
 #with XBian. If not, see <http://www.gnu.org/licenses/>
 #
 # Patches that are currently not working (need an upgrade) :
-# XBMC13: DualAudioOutput not supported
+# XBMC13: DualAudioOutput not supported, EGLRes13.patch
 
 if [ "$1" = "12" ]; then
 PATCHES="Build12.patch
@@ -34,7 +34,6 @@ elif [ "$1" = "13" ]; then
 PATCHES="Build13.patch
         RemoveGUISoundSettings13.patch
         XBianConfluence13.patch
-        EGLRes13.patch
         XBianSysSum13.patch
         eGalaxTouchscreen13.patch
         Splash.patch
