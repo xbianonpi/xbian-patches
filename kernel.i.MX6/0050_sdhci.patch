@@ -1,0 +1,29 @@
+From 1781494b1e31d77a45604a5236d735ffbfb99672 Mon Sep 17 00:00:00 2001
+From: Jon Nettleton <jon.nettleton@gmail.com>
+Date: Tue, 22 Apr 2014 09:15:31 +0200
+Subject: [PATCH] mmc: sdhci: bump up clock stabilize timeout
+
+According to the spec this should not take longer than 5 seconds
+however it seems that for UHS-I cards under iMX6 chipsets can take
+longer than that.  The upstream has it set to 20 which seems
+way to long.
+---
+ drivers/mmc/host/sdhci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 3b65bb7..e26eb25 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1514,7 +1514,7 @@ static void sdhci_do_set_ios(struct sdhci_host *host, struct mmc_ios *ios)
+ 			sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
+ 
+ 			/* Wait max 5 ms */
+-			timeout = 5;
++			timeout = 10;
+ 			while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
+ 				& SDHCI_CLOCK_INT_STABLE)) {
+ 				if (timeout == 0) {
+-- 
+1.8.4.2
+
