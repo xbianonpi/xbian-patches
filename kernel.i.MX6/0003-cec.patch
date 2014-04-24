@@ -1,5 +1,18 @@
+From c3a8313a97dc40a18f809ad1154c606c6b29d65f Mon Sep 17 00:00:00 2001
+From: Matus Kral <matuskral@me.com>
+Date: Thu, 24 Apr 2014 14:52:09 +0200
+Subject: [PATCH] updated CEC driver for Solidrun Cubox-i
+
+(update to libcec is also needed https://github.com/mk01/libcec/commit/40ac7550fe22a9fed665eec0aec1882498f838d6)
+---
+ drivers/mxc/hdmi-cec/mxc_hdmi-cec.c | 168 ++++++++++++++++++++----------------
+ drivers/mxc/hdmi-cec/mxc_hdmi-cec.h |   9 ++
+ drivers/video/mxc/mxc_edid.c        |   6 +-
+ drivers/video/mxc/mxc_hdmi.c        |  14 ++-
+ 4 files changed, 115 insertions(+), 82 deletions(-)
+
 diff --git a/drivers/mxc/hdmi-cec/mxc_hdmi-cec.c b/drivers/mxc/hdmi-cec/mxc_hdmi-cec.c
-index d0113ee..26f1c95 100644
+index d0113ee..8752786 100644
 --- a/drivers/mxc/hdmi-cec/mxc_hdmi-cec.c
 +++ b/drivers/mxc/hdmi-cec/mxc_hdmi-cec.c
 @@ -46,21 +46,12 @@
@@ -70,7 +83,7 @@ index d0113ee..26f1c95 100644
  	val = HDMI_IH_CEC_STAT0_WAKEUP | HDMI_IH_CEC_STAT0_ERROR_FOLL |
  			HDMI_IH_CEC_STAT0_ARB_LOST;
  	hdmi_writeb(val, HDMI_IH_MUTE_CEC_STAT0);
-@@ -298,42 +293,48 @@ static int hdmi_cec_open(struct inode *inode, struct file *filp)
+@@ -298,42 +293,47 @@ static int hdmi_cec_open(struct inode *inode, struct file *filp)
  static ssize_t hdmi_cec_read(struct file *file, char __user *buf, size_t count,
  			    loff_t *ppos)
  {
@@ -131,7 +144,6 @@ index d0113ee..26f1c95 100644
 +		}
 +	} while(!ret);
 +
-+	pr_debug("function : %s exit %d\n", __func__, ret);
 +	return ret;
  }
  
@@ -142,7 +154,7 @@ index d0113ee..26f1c95 100644
  	int ret = 0 , i = 0;
  	u8 msg[MAX_MESSAGE_LEN];
  	u8 msg_len = 0, val = 0;
-@@ -342,25 +343,29 @@ static ssize_t hdmi_cec_write(struct file *file, const char __user *buf,
+@@ -342,25 +342,29 @@ static ssize_t hdmi_cec_write(struct file *file, const char __user *buf,
  	if (!open_count)
  		return -ENODEV;
  
@@ -184,7 +196,7 @@ index d0113ee..26f1c95 100644
  	msg_len = count;
  	hdmi_writeb(msg_len, HDMI_CEC_TX_CNT);
  	for (i = 0; i < msg_len; i++) {
-@@ -370,24 +375,24 @@ static ssize_t hdmi_cec_write(struct file *file, const char __user *buf,
+@@ -370,24 +374,24 @@ static ssize_t hdmi_cec_write(struct file *file, const char __user *buf,
  	val = hdmi_readb(HDMI_CEC_CTRL);
  	val |= 0x01;
  	hdmi_writeb(val, HDMI_CEC_CTRL);
@@ -222,7 +234,7 @@ index d0113ee..26f1c95 100644
  	return ret;
  }
  
-@@ -399,7 +404,7 @@ end:
+@@ -399,7 +403,7 @@ end:
  static long hdmi_cec_ioctl(struct file *filp, u_int cmd,
  		     u_long arg)
  {
@@ -231,7 +243,7 @@ index d0113ee..26f1c95 100644
  	u8 val = 0, msg = 0;
  	struct mxc_edid_cfg hdmi_edid_cfg;
  
-@@ -491,11 +496,9 @@ static long hdmi_cec_ioctl(struct file *filp, u_int cmd,
+@@ -491,11 +495,9 @@ static long hdmi_cec_ioctl(struct file *filp, u_int cmd,
  
  	case HDMICEC_IOC_GETPHYADDRESS:
  		hdmi_get_edid_cfg(&hdmi_edid_cfg);
@@ -245,7 +257,7 @@ index d0113ee..26f1c95 100644
  		break;
  
  	default:
-@@ -512,12 +515,25 @@ static long hdmi_cec_ioctl(struct file *filp, u_int cmd,
+@@ -512,12 +514,25 @@ static long hdmi_cec_ioctl(struct file *filp, u_int cmd,
  */
  static int hdmi_cec_release(struct inode *inode, struct file *filp)
  {
@@ -271,7 +283,7 @@ index d0113ee..26f1c95 100644
  	}
  
  	mutex_unlock(&hdmi_cec_data.lock);
-@@ -531,16 +547,14 @@ static unsigned int hdmi_cec_poll(struct file *file, poll_table *wait)
+@@ -531,16 +546,14 @@ static unsigned int hdmi_cec_poll(struct file *file, poll_table *wait)
  
  	pr_debug("function : %s\n", __func__);
  
@@ -292,7 +304,7 @@ index d0113ee..26f1c95 100644
  
  	return mask;
  }
-@@ -631,6 +645,9 @@ out:
+@@ -631,6 +644,9 @@ out:
  
  static int hdmi_cec_dev_remove(struct platform_device *pdev)
  {
@@ -303,14 +315,14 @@ index d0113ee..26f1c95 100644
  		device_destroy(hdmi_cec_class, MKDEV(hdmi_cec_major, 0));
  		class_destroy(hdmi_cec_class);
 diff --git a/drivers/mxc/hdmi-cec/mxc_hdmi-cec.h b/drivers/mxc/hdmi-cec/mxc_hdmi-cec.h
-index 4437057..4600c10 100644
+index 4437057..297f628 100644
 --- a/drivers/mxc/hdmi-cec/mxc_hdmi-cec.h
 +++ b/drivers/mxc/hdmi-cec/mxc_hdmi-cec.h
 @@ -35,4 +35,13 @@
  #define HDMICEC_IOC_GETPHYADDRESS	\
  				_IOR(HDMICEC_IOC_MAGIC, 4, unsigned char[4])
  
-+#define MAX_MESSAGE_LEN         16
++#define MAX_MESSAGE_LEN                         16
 +
 +#define MESSAGE_TYPE_RECEIVE_SUCCESS            1
 +#define MESSAGE_TYPE_NOACK                      2
@@ -321,28 +333,24 @@ index 4437057..4600c10 100644
  #endif				/* !_HDMICEC_H_ */
 +
 diff --git a/drivers/video/mxc/mxc_edid.c b/drivers/video/mxc/mxc_edid.c
-index 88b5268..942389f 100644
+index 88b5268..85b19f5 100644
 --- a/drivers/video/mxc/mxc_edid.c
 +++ b/drivers/video/mxc/mxc_edid.c
-@@ -348,11 +348,13 @@ int mxc_edid_parse_ext_blk(unsigned char *edid,
+@@ -348,10 +348,8 @@ int mxc_edid_parse_ext_blk(unsigned char *edid,
  					IEEE_reg_iden[0] = edid[index+1];
  					IEEE_reg_iden[1] = edid[index+2];
  					IEEE_reg_iden[2] = edid[index+3];
 -					cfg->physical_address[0] = (edid[index+4] & 0xf0) >> 4;
 -					cfg->physical_address[1] = (edid[index+4] & 0x0f);
-+
-+                                        cfg->physical_address[0] = edid[index+5];
-+                                        cfg->physical_address[1] = edid[index+4];
-+/* MK
- 					cfg->physical_address[2] = (edid[index+5] & 0xf0) >> 4;
- 					cfg->physical_address[3] = (edid[index+5] & 0x0f);
--
-+*/
+-					cfg->physical_address[2] = (edid[index+5] & 0xf0) >> 4;
+-					cfg->physical_address[3] = (edid[index+5] & 0x0f);
++					cfg->physical_address[0] = edid[index+5];
++					cfg->physical_address[1] = edid[index+4];
+ 
  					if ((IEEE_reg_iden[0] == 0x03) &&
  							(IEEE_reg_iden[1] == 0x0c) &&
- 							(IEEE_reg_iden[2] == 0x00))
 diff --git a/drivers/video/mxc/mxc_hdmi.c b/drivers/video/mxc/mxc_hdmi.c
-index 9113aa3..d471c24 100644
+index 160db29..07d0bfd 100644
 --- a/drivers/video/mxc/mxc_hdmi.c
 +++ b/drivers/video/mxc/mxc_hdmi.c
 @@ -1704,8 +1704,12 @@ static void mxc_hdmi_enable_video_path(struct mxc_hdmi *hdmi)
@@ -359,7 +367,7 @@ index 9113aa3..d471c24 100644
  	clkdis &= ~HDMI_MC_CLKDIS_PIXELCLK_DISABLE;
  	hdmi_writeb(clkdis, HDMI_MC_CLKDIS);
  
-@@ -1985,10 +1990,16 @@ static void mxc_hdmi_power_off(struct mxc_dispdrv_handle *disp)
+@@ -1985,10 +1989,16 @@ static void mxc_hdmi_power_off(struct mxc_dispdrv_handle *disp)
  
  static void mxc_hdmi_cable_disconnected(struct mxc_hdmi *hdmi)
  {
@@ -377,3 +385,6 @@ index 9113aa3..d471c24 100644
  
  	mxc_hdmi_phy_disable(hdmi);
  
+-- 
+1.8.4.2
+
