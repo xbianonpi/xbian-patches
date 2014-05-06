@@ -1,0 +1,91 @@
+diff --git a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
+index 8919380..f7f1f73 100644
+--- a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
++++ b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
+@@ -631,6 +631,8 @@ int CPeripheralCecAdapter::CecCommand(void *cbParam, const cec_command command)
+         else if (adapter->m_configuration.bShutdownOnStandby == 1)
+           CApplicationMessenger::Get().Shutdown();
+       }
++      else if (command.initiator == CECDEVICE_TV)
++        g_application.SetCecStandby(true);
+       break;
+     case CEC_OPCODE_SET_MENU_LANGUAGE:
+       if (adapter->m_configuration.bUseTVMenuLanguage == 1 && command.initiator == CECDEVICE_TV && command.parameters.size == 3)
+@@ -1127,8 +1129,12 @@ void CPeripheralCecAdapter::CecSourceActivated(void *cbParam, const CEC::cec_log
+     return;
+ 
+   // wake up the screensaver, so the user doesn't switch to a black screen
+-  if (activated == 1)
++  if (activated == 1) {
+     g_application.WakeUpScreenSaverAndDPMS();
++    g_application.SetCecStandby(false);
++  }
++  else
++    g_application.SetCecStandby(true);
+ 
+   if (adapter->GetSettingBool("pause_playback_on_deactivate"))
+   {
+diff --git a/xbmc/Application.h b/xbmc/Application.h
+index 2ca6a9b..a9f2e1b 100644
+--- a/xbmc/Application.h
++++ b/xbmc/Application.h
+@@ -208,6 +208,7 @@ public:
+   void ResetSystemIdleTimer();
+   void ResetScreenSaverTimer();
+   void StopScreenSaverTimer();
++  void SetCecStandby(bool status);
+   // Wakes up from the screensaver and / or DPMS. Returns true if woken up.
+   bool WakeUpScreenSaverAndDPMS(bool bPowerOffKeyPressed = false);
+   bool WakeUpScreenSaver(bool bPowerOffKeyPressed = false);
+@@ -402,6 +403,8 @@ protected:
+   bool m_dpmsIsActive;
+   bool m_dpmsIsManual;
+ 
++  bool m_cecIsStandby;
++
+   CFileItemPtr m_itemCurrentFile;
+   CFileItemList* m_currentStack;
+   CFileItemPtr m_stackFileItemToUpdate;
+diff --git a/xbmc/Application.cpp b/xbmc/Application.cpp
+index c4d7cd9..630f964 100644
+--- a/xbmc/Application.cpp
++++ b/xbmc/Application.cpp
+@@ -405,6 +405,7 @@ CApplication::CApplication(void)
+   m_skinReloading = false;
+   m_skinReverting = false;
+   m_loggingIn = false;
++  m_cecIsStandby = false;
+ 
+ #ifdef HAS_GLX
+   XInitThreads();
+@@ -2195,6 +2196,12 @@ float CApplication::GetDimScreenSaverLevel() const
+   return 100.0f;
+ }
+ 
++void CApplication::SetCecStandby(bool status)
++{
++  CLog::Log(LOGDEBUG, "setting cecIsStandby to %s", status?"true":"false");
++  m_cecIsStandby = status;
++}
++
+ void CApplication::Render()
+ {
+   // do not render if we are stopped or in background
+@@ -2211,7 +2218,7 @@ void CApplication::Render()
+ 
+   {
+     // Less fps in DPMS
+-    bool lowfps = m_dpmsIsActive || g_Windowing.EnableFrameLimiter();
++    bool lowfps = m_dpmsIsActive || g_Windowing.EnableFrameLimiter() || m_cecIsStandby;
+     // Whether externalplayer is playing and we're unfocused
+     bool extPlayerActive = m_pPlayer->GetCurrentPlayer() == EPC_EXTPLAYER && m_pPlayer->IsPlaying() && !m_AppFocused;
+ 
+@@ -2239,6 +2246,8 @@ void CApplication::Render()
+           ResetScreenSaver();  // Prevent screensaver dimming the screen
+           singleFrameTime = 1000;  // 1 fps, high wakeup latency but v.low CPU usage
+         }
++        else if (m_cecIsStandby)
++          singleFrameTime = 1000;
+         else if (lowfps)
+           singleFrameTime = 200;  // 5 fps, <=200 ms latency to wake up
+       }

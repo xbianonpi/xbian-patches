@@ -38,7 +38,8 @@ PATCHES="Build13.patch
         eGalaxTouchscreen13.patch
         Splash.patch
         Wiimote.patch
-        MediaLibrary13.patch"
+        MediaLibrary13.patch
+        CecStandbyRender.patch"
 fi
 
 for patch in $PATCHES
