@@ -85,7 +85,7 @@ index c4d7cd9..630f964 100644
            singleFrameTime = 1000;  // 1 fps, high wakeup latency but v.low CPU usage
          }
 +        else if (m_cecIsStandby)
-+          singleFrameTime = 1000;
++          singleFrameTime = 500;
          else if (lowfps)
            singleFrameTime = 200;  // 5 fps, <=200 ms latency to wake up
        }
