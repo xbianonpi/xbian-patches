@@ -17,8 +17,8 @@ index 8919380..f7f1f73 100644
    // wake up the screensaver, so the user doesn't switch to a black screen
 -  if (activated == 1)
 +  if (activated == 1) {
-     g_application.WakeUpScreenSaverAndDPMS();
 +    g_application.SetCecStandby(false);
+     g_application.WakeUpScreenSaverAndDPMS();
 +  }
 +  else
 +    g_application.SetCecStandby(true);
