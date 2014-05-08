@@ -1,0 +1,26 @@
+From 2ac991c9800e8ac01a0745b61f0f9e00707e77bb Mon Sep 17 00:00:00 2001
+From: Matus Kral <matuskral@me.com>
+Date: Sun, 20 Apr 2014 22:24:03 +0200
+Subject: [PATCH] fix assertion on XBMC exit
+
+---
+ src/lib/adapter/RPi/RPiCECAdapterCommunication.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/lib/adapter/RPi/RPiCECAdapterCommunication.cpp b/src/lib/adapter/RPi/RPiCECAdapterCommunication.cpp
+index 2905c56..243223d 100644
+--- a/src/lib/adapter/RPi/RPiCECAdapterCommunication.cpp
++++ b/src/lib/adapter/RPi/RPiCECAdapterCommunication.cpp
+@@ -353,7 +353,8 @@ void CRPiCECAdapterCommunication::Close(void)
+     else
+       return;
+   }
+-  vc_tv_unregister_callback(rpi_tv_callback);
++  if (m_bInitialised)
++    vc_tv_unregister_callback(rpi_tv_callback);
+ 
+   UnregisterLogicalAddress();
+ 
+-- 
+1.8.4.2
+

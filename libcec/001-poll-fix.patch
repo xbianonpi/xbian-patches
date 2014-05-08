@@ -1,3 +1,12 @@
+From 6c9171238c03e88e4ddc499a1b7a5555f64e5158 Mon Sep 17 00:00:00 2001
+From: Matus Kral <matuskral@me.com>
+Date: Tue, 15 Apr 2014 11:07:00 +0200
+Subject: [PATCH] fix RPI POLL during LA address negotiation
+
+---
+ src/lib/adapter/RPi/RPiCECAdapterCommunication.cpp | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
 diff --git a/src/lib/adapter/RPi/RPiCECAdapterCommunication.cpp b/src/lib/adapter/RPi/RPiCECAdapterCommunication.cpp
 index 76c61b3..2905c56 100644
 --- a/src/lib/adapter/RPi/RPiCECAdapterCommunication.cpp
@@ -25,3 +34,6 @@ index 76c61b3..2905c56 100644
  }
  
  uint16_t CRPiCECAdapterCommunication::GetFirmwareVersion(void)
+-- 
+1.8.4.2
+
