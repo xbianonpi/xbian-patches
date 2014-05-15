@@ -89,3 +89,54 @@ index c4d7cd9..630f964 100644
          else if (lowfps)
            singleFrameTime = 200;  // 5 fps, <=200 ms latency to wake up
        }
+diff --git a/xbmc/ApplicationMessenger.cpp b/xbmc/ApplicationMessenger.cpp
+index 2893af7..59ba5fd 100644
+--- a/xbmc/ApplicationMessenger.cpp
++++ b/xbmc/ApplicationMessenger.cpp
+@@ -260,6 +260,7 @@ void CApplicationMessenger::ProcessMessage(ThreadMessage *pMsg)
+ 
+     case TMSG_POWERDOWN:
+       {
++        g_application.SetCecStandby(false);
+         g_application.Stop(EXITCODE_POWERDOWN);
+         g_powerManager.Powerdown();
+       }
+@@ -267,12 +268,14 @@ void CApplicationMessenger::ProcessMessage(ThreadMessage *pMsg)
+ 
+     case TMSG_QUIT:
+       {
++        g_application.SetCecStandby(false);
+         g_application.Stop(EXITCODE_QUIT);
+       }
+       break;
+ 
+     case TMSG_HIBERNATE:
+       {
++        g_application.SetCecStandby(false);
+         g_PVRManager.SetWakeupCommand();
+         g_powerManager.Hibernate();
+       }
+@@ -280,6 +283,7 @@ void CApplicationMessenger::ProcessMessage(ThreadMessage *pMsg)
+ 
+     case TMSG_SUSPEND:
+       {
++        g_application.SetCecStandby(false);
+         g_PVRManager.SetWakeupCommand();
+         g_powerManager.Suspend();
+       }
+@@ -288,6 +292,7 @@ void CApplicationMessenger::ProcessMessage(ThreadMessage *pMsg)
+     case TMSG_RESTART:
+     case TMSG_RESET:
+       {
++        g_application.SetCecStandby(false);
+         g_application.Stop(EXITCODE_REBOOT);
+         g_powerManager.Reboot();
+       }
+@@ -296,6 +301,7 @@ void CApplicationMessenger::ProcessMessage(ThreadMessage *pMsg)
+     case TMSG_RESTARTAPP:
+       {
+ #if defined(TARGET_WINDOWS) || defined(TARGET_LINUX)
++        g_application.SetCecStandby(false);
+         g_application.Stop(EXITCODE_RESTARTAPP);
+ #endif
+       }
