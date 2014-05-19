@@ -114,10 +114,10 @@ index 2893af7..59ba5fd 100644
  #endif
        }
 diff --git a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
-index 8919380..84dc757 100644
+index 8919380..849d7ea 100644
 --- a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
 +++ b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
-@@ -631,6 +631,13 @@ int CPeripheralCecAdapter::CecCommand(void *cbParam, const cec_command command)
+@@ -631,6 +631,12 @@ int CPeripheralCecAdapter::CecCommand(void *cbParam, const cec_command command)
          else if (adapter->m_configuration.bShutdownOnStandby == 1)
            CApplicationMessenger::Get().Shutdown();
        }
@@ -126,11 +126,11 @@ index 8919380..84dc757 100644
 +      break;
 +    case CEC_OPCODE_MENU_REQUEST:
 +      if (command.initiator == CECDEVICE_TV)
-+        adapter->CecSourceActivated(cbParam, (CEC::cec_logical_address)0xf, 1);
++        g_application.SetCecStandby(false);
        break;
      case CEC_OPCODE_SET_MENU_LANGUAGE:
        if (adapter->m_configuration.bUseTVMenuLanguage == 1 && command.initiator == CECDEVICE_TV && command.parameters.size == 3)
-@@ -1128,7 +1135,12 @@ void CPeripheralCecAdapter::CecSourceActivated(void *cbParam, const CEC::cec_log
+@@ -1128,7 +1134,12 @@ void CPeripheralCecAdapter::CecSourceActivated(void *cbParam, const CEC::cec_log
  
    // wake up the screensaver, so the user doesn't switch to a black screen
    if (activated == 1)
