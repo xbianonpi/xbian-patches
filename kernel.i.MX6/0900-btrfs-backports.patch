@@ -1,0 +1,54 @@
+diff --git b/fs/btrfs/compression.c a/fs/btrfs/compression.c
+index aaeb415..ce70678 100644
+--- b/fs/btrfs/compression.c
++++ a/fs/btrfs/compression.c
+@@ -1011,6 +1009,8 @@ int btrfs_decompress_buf2page(char *buf, unsigned long buf_start,
+ 		bytes = min(bytes, working_bytes);
+ 		kaddr = kmap_atomic(page_out);
+ 		memcpy(kaddr + *pg_offset, buf + buf_offset, bytes);
++		if (*pg_index == (vcnt - 1) && *pg_offset == 0)
++			memset(kaddr + bytes, 0, PAGE_CACHE_SIZE - bytes);
+ 		kunmap_atomic(kaddr);
+ 		flush_dcache_page(page_out);
+ 
+diff --git b/fs/btrfs/disk-io.c a/fs/btrfs/disk-io.c
+index ad72f4e..4354b91 100644
+--- b/fs/btrfs/disk-io.c
++++ a/fs/btrfs/disk-io.c
+@@ -3165,6 +3161,8 @@ static int barrier_all_devices(struct btrfs_fs_info *info)
+ 	/* send down all the barriers */
+ 	head = &info->fs_devices->devices;
+ 	list_for_each_entry_rcu(dev, head, dev_list) {
++		if (dev->missing)
++			continue;
+ 		if (!dev->bdev) {
+ 			errors_send++;
+ 			continue;
+@@ -3179,6 +3177,8 @@ static int barrier_all_devices(struct btrfs_fs_info *info)
+ 
+ 	/* wait for all the barriers */
+ 	list_for_each_entry_rcu(dev, head, dev_list) {
++		if (dev->missing)
++			continue;
+ 		if (!dev->bdev) {
+ 			errors_wait++;
+ 			continue;
+diff --git b/fs/btrfs/inode.c a/fs/btrfs/inode.c
+index 25e6a8e..8fcd242 100644
+--- b/fs/btrfs/inode.c
++++ a/fs/btrfs/inode.c
+@@ -4527,8 +4527,12 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
+ 	 * these flags set.  For all other operations the VFS set these flags
+ 	 * explicitly if it wants a timestamp update.
+ 	 */
+-	if (newsize != oldsize && (!(mask & (ATTR_CTIME | ATTR_MTIME))))
+-		inode->i_ctime = inode->i_mtime = current_fs_time(inode->i_sb);
++	if (newsize != oldsize) {
++		inode_inc_iversion(inode);
++		if (!(mask & (ATTR_CTIME | ATTR_MTIME)))
++			inode->i_ctime = inode->i_mtime =
++				current_fs_time(inode->i_sb);
++	}
+ 
+ 	if (newsize > oldsize) {
+ 		truncate_pagecache(inode, oldsize, newsize);
