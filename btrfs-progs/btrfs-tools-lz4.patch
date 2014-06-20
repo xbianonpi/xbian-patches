@@ -64,7 +64,7 @@ index 2117374..6d5c4e2 100644
 -	BTRFS_COMPRESS_LAST  = 3,
 +        BTRFS_COMPRESS_LZ4   = 3,
 +        BTRFS_COMPRESS_LZ4HC = 4,
-+	BTRFS_COMPRESS_TYPES = 5,
++	BTRFS_COMPRESS_TYPES = 4,
 +	BTRFS_COMPRESS_LAST  = 5,
  } btrfs_compression_type;
  
