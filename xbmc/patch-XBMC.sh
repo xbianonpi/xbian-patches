@@ -39,7 +39,8 @@ PATCHES="Build13.patch
         Splash.patch
         Wiimote.patch
         MediaLibrary13.patch
-        CecStandbyRender.patch"
+        CecStandbyRender.patch
+        gotham-python-monitor-onclean.diff"
 fi
 
 for patch in $PATCHES
@@ -57,5 +58,3 @@ mv Lircmap.xml system
 
 wget https://raw.github.com/xbianonpi/xbian-patches/master/xbmc/remote.xml
 mv remote.xml system/keymaps
-
-
