@@ -18,19 +18,7 @@
 # Patches that are currently not working (need an upgrade) :
 # XBMC13: DualAudioOutput not supported, EGLRes13.patch
 
-if [ "$1" = "12" ]; then
-PATCHES="Build12.patch
-        eGalaxTouchscreen12.patch
-        EGLRes12.patch
-        XBianSysSum12.patch
-        gnutls-for-ffmpeg.patch
-        ReduceMenuFontSize.patch
-        RemoveGUISoundSettings12.patch
-        Wiimote.patch   
-        Splash.patch
-        XBianConfluence12.patch
-        MediaLibrary12.patch"
-elif [ "$1" = "13" ]; then
+if [ "$1" = "13" ]; then
 PATCHES="Build13.patch
         RemoveGUISoundSettings13.patch
         XBianConfluence13.patch
@@ -41,6 +29,13 @@ PATCHES="Build13.patch
         MediaLibrary13.patch
         CecStandbyRender.patch
         gotham-python-monitor-onclean.diff"
+elif [ "$1" = "14" ]; then
+# Placeholder for future Helix builds.
+# As of 2014-06-17 all Gotham patches above apply to Helix cleanly.
+echo "We're not providing Helix builds right now."
+exit 1
+
+PATCHES=""
 fi
 
 for patch in $PATCHES
