@@ -1,6 +1,6 @@
-diff -Naur a/arch/arm/boot/dts/imx6dl-hummingboard.dts b/arch/arm/boot/dts/imx6dl-hummingboard.dts
---- a/arch/arm/boot/dts/imx6dl-hummingboard.dts	2014-03-22 18:54:01.000000000 +0100
-+++ b/arch/arm/boot/dts/imx6dl-hummingboard.dts	2014-03-22 19:27:28.561585329 +0100
+diff -Naur a/arch/arm/boot/dts/imx6qdl-hummingboard.dtsi b/arch/arm/boot/dts/imx6qdl-hummingboard.dtsi
+--- a/arch/arm/boot/dts/imx6qdl-hummingboard.dtsi	2014-03-22 18:54:01.000000000 +0100
++++ b/arch/arm/boot/dts/imx6qdl-hummingboard.dtsi	2014-03-22 19:27:28.561585329 +0100
 @@ -58,13 +58,13 @@
  			regulator-max-microvolt = <5000000>;
  		};
