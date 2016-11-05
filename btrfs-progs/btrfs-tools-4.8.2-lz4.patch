@@ -1,0 +1,70 @@
+diff --git a/cmds-filesystem.c b/cmds-filesystem.c
+index 41623f3..1ed1115 100644
+--- a/cmds-filesystem.c
++++ b/cmds-filesystem.c
+@@ -952,6 +952,8 @@ static int parse_compress_type(char *s)
+ 		return BTRFS_COMPRESS_ZLIB;
+ 	else if (strcmp(optarg, "lzo") == 0)
+ 		return BTRFS_COMPRESS_LZO;
++	else if (strcmp(optarg, "lz4") == 0)
++		return BTRFS_COMPRESS_LZ4;
+ 	else {
+ 		error("unknown compression type %s", s);
+ 		exit(1);
+@@ -962,13 +964,13 @@ static const char * const cmd_filesystem_defrag_usage[] = {
+ 	"btrfs filesystem defragment [options] <file>|<dir> [<file>|<dir>...]",
+ 	"Defragment a file or a directory",
+ 	"",
+-	"-v             be verbose",
+-	"-r             defragment files recursively",
+-	"-c[zlib,lzo]   compress the file while defragmenting",
+-	"-f             flush data to disk immediately after defragmenting",
+-	"-s start       defragment only from byte onward",
+-	"-l len         defragment only up to len bytes",
+-	"-t size        target extent size hint (default: 32M)",
++	"-v               be verbose",
++	"-r               defragment files recursively",
++	"-c[zlib,lzo,lz4] compress the file while defragmenting",
++	"-f               flush data to disk immediately after defragmenting",
++	"-s start         defragment only from byte onward",
++	"-l len           defragment only up to len bytes",
++	"-t size          minimal size of file to be considered for defragmenting",
+ 	NULL
+ };
+ 
+diff --git a/ctree.h b/ctree.h
+index c76b1f1..3a8b31f 100644
+--- a/ctree.h
++++ b/ctree.h
+@@ -469,6 +469,7 @@ struct btrfs_super_block {
+ #define BTRFS_FEATURE_INCOMPAT_DEFAULT_SUBVOL	(1ULL << 1)
+ #define BTRFS_FEATURE_INCOMPAT_MIXED_GROUPS	(1ULL << 2)
+ #define BTRFS_FEATURE_INCOMPAT_COMPRESS_LZO	(1ULL << 3)
++#define BTRFS_FEATURE_INCOMPAT_COMPRESS_LZ4     (1ULL << 4)
+ 
+ /*
+  * some patches floated around with a second compression method
+@@ -501,8 +502,10 @@ struct btrfs_super_block {
+ 	 BTRFS_FEATURE_INCOMPAT_RAID56 |		\
+ 	 BTRFS_FEATURE_INCOMPAT_MIXED_GROUPS |		\
+ 	 BTRFS_FEATURE_INCOMPAT_SKINNY_METADATA |	\
++	 BTRFS_FEATURE_INCOMPAT_COMPRESS_LZ4 |		\
+ 	 BTRFS_FEATURE_INCOMPAT_NO_HOLES)
+ 
++
+ /*
+  * A leaf is full of items. offset and size tell us where to find
+  * the item in the leaf (relative to the start of the data area)
+@@ -655,8 +658,10 @@ typedef enum {
+ 	BTRFS_COMPRESS_NONE  = 0,
+ 	BTRFS_COMPRESS_ZLIB  = 1,
+ 	BTRFS_COMPRESS_LZO   = 2,
+-	BTRFS_COMPRESS_TYPES = 2,
+-	BTRFS_COMPRESS_LAST  = 3,
++        BTRFS_COMPRESS_LZ4   = 3,
++        BTRFS_COMPRESS_LZ4HC = 4,
++	BTRFS_COMPRESS_TYPES = 4,
++	BTRFS_COMPRESS_LAST  = 5,
+ } btrfs_compression_type;
+ 
+ /* we don't understand any encryption methods right now */
